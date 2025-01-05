@@ -11,7 +11,7 @@ from pathlib import Path
 print("##########")
 print("## #### ##  GDLevelsLib [ALPHA]")
 print("##########  by poyo52596kirby")
-print("#        #  Version 1.0.0a-01")
+print("#        #  Version 1.0.0a-02")
 print("##########\n")
 
 class GeometryDashObject:
@@ -43,8 +43,8 @@ class GeometryDashObject:
             if self.other["copyColorID"]:
                 base_string += f"10,{self.other['copyColorID']},"
 
-            if self.other["touchTriggered"]:
-                base_string += f"11,{self.other['touchTriggered']},"
+            if self.other["zLayer"]:
+                base_string += f"11,{self.other['zLayer']},"
 
             if self.other["fadeIn"]:
                 base_string += f"36,{self.other['fadeIn']},"
@@ -279,7 +279,23 @@ def decode_level_string(data: str):
         baseHSV = 0 # property 8
         detailHSV = 0 # property 9
         copyColorID = 0 # property 10
-        touchTriggered = 0 # property 11 (in consideration mode)
+        zLayer = 0 # property 11
+        scale = 0 # property 13
+        groupParent = 0 # property 15
+        editorLayer1 = 0 # property 17
+        editorLayer2 = 0 # property 20
+        copyOpacity = 0 # property 21
+        colBlending = 0 # property 22
+        targetGroup = 0 # property 23
+        extra = 0 # property 24
+        baseHSVEnabled = 0 # property 25
+        detailHSVEnabled = 0 # property 26
+        editorLayer3 = 0 # property 28
+        base = 0 # property 29
+        detail = 0 # property 30
+        triggerDuration = 0 # property 31
+        touchTriggered = 0 # property 32
+        coinID = 0 # property 34
         fadeIn = 0 # property 36
         lockPlayerX = 0 # property 155
 
@@ -301,7 +317,55 @@ def decode_level_string(data: str):
                     copyColorID = float(obj[2*i+1])
 
                 if obj[(2*i+1)-1] == "11":
-                    touchTriggered = int(obj[2*i+1]) 
+                    zLayer = int(obj[2*i+1]) 
+
+                if obj[(2*i+1)-1] == "13":
+                    scale = float(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "15":
+                    groupParent = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "17":
+                    editorLayer1 = int(obj[2*i+1])
+                
+                if obj[(2*i+1)-1] == "20":
+                    editorLayer2 = int(obj[2*i+1])
+                
+                if obj[(2*i+1)-1] == "21":
+                    copyOpacity = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "22":
+                    colBlending = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "23":
+                    targetGroup = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "24":
+                    extra = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "25":
+                    baseHSVEnabled = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "26":
+                    detailHSVEnabled = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "28":
+                    editorLayer3 = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "29":
+                    base = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "30":
+                    detail = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "31":
+                    triggerDuration = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "32":
+                    touchTriggered = int(obj[2*i+1])
+
+                if obj[(2*i+1)-1] == "34":
+                    coinID = int(obj[2*i+1])
 
                 if obj[(2*i+1)-1] == "36":
                     fadeIn = int(obj[2*i+1]) 
@@ -309,7 +373,6 @@ def decode_level_string(data: str):
                 if obj[(2*i+1)-1] == "155":
                     lockPlayerX = int(obj[2*i+1]) 
 
-        # print(obj, touchTriggered)
         if (len(obj) > 3):
             level_objects.append(GeometryDashObject(x, y, obj[5], dir, {
                 flipX: flipX, 
@@ -318,7 +381,23 @@ def decode_level_string(data: str):
                 baseHSV: baseHSV,
                 detailHSV: detailHSV,
                 copyColorID: copyColorID,
+                zLayer: zLayer,
+                scale: scale,
+                groupParent: groupParent,
+                editorLayer1: editorLayer1,
+                editorLayer2: editorLayer2,
+                copyOpacity: copyOpacity,
+                colBlending: colBlending,
+                targetGroup: targetGroup,
+                extra: extra,
+                baseHSVEnabled: baseHSVEnabled,
+                detailHSVEnabled: detailHSVEnabled,
+                editorLayer3: editorLayer3,
+                base: base,
+                detail: detail,
+                triggerDuration: triggerDuration,
                 touchTriggered: touchTriggered,
+                coinID: coinID,
                 fadeIn: fadeIn,
                 lockPlayerX: lockPlayerX
             }))
