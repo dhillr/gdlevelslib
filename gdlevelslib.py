@@ -11,7 +11,7 @@ from pathlib import Path
 print("##########")
 print("## #### ##  GDLevelsLib [ALPHA]")
 print("##########  by poyo52596kirby")
-print("#        #  Version 1.0.0a-02")
+print("#        #  Version 1.0.3a")
 print("##########\n")
 
 class GeometryDashObject:

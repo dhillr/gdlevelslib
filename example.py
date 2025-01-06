@@ -15,7 +15,7 @@
 import gdlevelslib as GD
 
 # Create a new level
-myLevel = GD.GeometryDashLevel("example", "poyo52596kirby", "example", '0', None)
+myLevel = GD.GeometryDashLevel("Example", "Example Username", "example", '0', None)
 
 # Add 1'024 objects to the level
 for i in range(1024):
