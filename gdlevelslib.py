@@ -11,16 +11,17 @@ from pathlib import Path
 print("##########")
 print("## #### ##  GDLevelsLib [ALPHA]")
 print("##########  by poyo52596kirby")
-print("#        #  Version 1.0.3a")
+print("#        #  Version 1.0.4a")
 print("##########\n")
 
 class GeometryDashObject:
-    def __init__(self, objectID, x, y, dir, other):
+    def __init__(self, objectID, x, y, dir, other, textValue=None):
         self.objectID = objectID
         self.x = x
         self.y = y
         self.dir = dir
         self.other = other if other else None
+        self.textValue = textValue if textValue else None
 
     def generate_string(self) -> str:
         base_string = f"1,{self.objectID},2,{self.x},3,{self.y},6,{self.dir},"
@@ -45,6 +46,9 @@ class GeometryDashObject:
 
             if self.other["zLayer"]:
                 base_string += f"11,{self.other['zLayer']},"
+
+            if self.textValue:
+                base_string += f"31,{self.textValue},"
 
             if self.other["fadeIn"]:
                 base_string += f"36,{self.other['fadeIn']},"
@@ -293,7 +297,7 @@ def decode_level_string(data: str):
         editorLayer3 = 0 # property 28
         base = 0 # property 29
         detail = 0 # property 30
-        triggerDuration = 0 # property 31
+        textValue = 0 # property 31
         touchTriggered = 0 # property 32
         coinID = 0 # property 34
         fadeIn = 0 # property 36
@@ -359,7 +363,7 @@ def decode_level_string(data: str):
                     detail = int(obj[2*i+1])
 
                 if obj[(2*i+1)-1] == "31":
-                    triggerDuration = int(obj[2*i+1])
+                    textValue = int(obj[2*i+1])
 
                 if obj[(2*i+1)-1] == "32":
                     touchTriggered = int(obj[2*i+1])
@@ -395,7 +399,7 @@ def decode_level_string(data: str):
                 editorLayer3: editorLayer3,
                 base: base,
                 detail: detail,
-                triggerDuration: triggerDuration,
+                textValue: textValue,
                 touchTriggered: touchTriggered,
                 coinID: coinID,
                 fadeIn: fadeIn,
