@@ -1,3 +1,6 @@
+> [!NOTE]
+> **GDLevelsLib** is now in alpha! Testers would be greatly appreciated.
+
 # GDLevelsLib
 
 A library for editing Geometry Dash levels.
@@ -20,10 +23,6 @@ GD.add_level(myLevel)
 ```
 
 > [!CAUTION]
-> **GDLevelsLib** is still in beta, so this may change!
+> **GDLevelsLib** is still in alpha, so this may change!
 >
 > I will make sure to update the example project.
-
-### Coming soon!
-> [!NOTE]
-> I have already finished the code for **GDLevelsLib** and I will release it to GitHub soon.
