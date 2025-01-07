@@ -12,7 +12,7 @@ You can't edit existing levels yet, but you can create them.
 import gdlevelslib as GD
 
 # Create a new level
-myLevel = GD.GeometryDashLevel("Example", "Example Username", "example", '0', None)
+myLevel = GD.GeometryDashLevel("Example", "Example Username", "example", None, revision=0)
 
 # Add 1024 objects to the level
 for i in range(1024):

@@ -1,0 +1,69 @@
+{
+    "blocks": {
+        "block": 1,
+        "block1_edge": 2,
+        "block1_edge2": 3,
+        "block1_corner": 4,
+        "block1_empty": 5,
+        "block1_edge3": 6,
+        "block1_edgeH": 7,
+        "slab": 40
+    },
+
+    "spikes": {
+        "spike": 8,
+        "flat_spike": 39
+    },
+
+    "ground_spikes": {
+        "ground_spike": 9
+    },
+
+    "portals": {
+        "normal_gravity_portal": 10,
+        "upsidedown_gravity_portal": 11,
+        "cube_portal": 12,
+        "ship_portal": 13,
+        "mirror_portal": 45,
+        "mirror_portal_exit": 46,
+        "ball_portal": 47
+    },
+
+    "deco": {
+        "pole_big": 15,
+        "pole_medium": 16,
+        "pole_small": 17,
+        "ground_deco1": 18,
+        "ground_deco2": 19,
+        "ground_deco_meduim": 20,
+        "ground_deco_small": 21,
+        "chain1": 41
+    },
+
+    "triggers": {
+        "dont_enter": 22,
+        "enter_up": 23,
+        "enter_down": 24,
+        "enter_right": 25,
+        "enter_left": 26,
+        "enter_shrink": 27,
+        "enter_grow": 28,
+        "col_bg": 29,
+        "col_ground": 30,
+        "start_pos": 31,
+        "trail_enable": 32,
+        "trail_disable": 33
+    },
+
+    "buggy": {
+        "buggy_startpos": 34
+    },
+
+    "orbs": {
+        "yellow_orb": 36
+    },
+
+    "pads": {
+        "yellow_pad": 35
+    }
+}

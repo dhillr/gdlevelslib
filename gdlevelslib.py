@@ -3,8 +3,8 @@ import base64
 import xml.etree.ElementTree as ET
 import os
 import math
+import json
 from typing import Optional
-from time import *
 from xml.dom import minidom
 from pathlib import Path
 
@@ -15,6 +15,19 @@ print("#        #  Version 1.0.4a")
 print("##########\n")
 
 class GeometryDashObject:
+    """
+    This is a class for Geometry Dash objects.
+
+    ### Parameters:
+        objectID (int): The object's ID.
+        x (int): The object's X position.
+        y (int): The object's Y position.
+        dir (int): The object's direction.
+
+    ### Object Properties:
+        textValue (str): The object's text value.
+    """
+
     def __init__(self, objectID, x, y, dir, other, textValue=None):
         self.objectID = objectID
         self.x = x
@@ -64,11 +77,23 @@ class GeometryDashObject:
         return self
 
 class GeometryDashLevel:
-    def __init__(self, title, author, description, revision, data):
+    """
+    This is a class for Geometry Dash levels.
+
+    ### Parameters:
+        title (str): The level's title.
+        author (str): The level's author.
+        description (str): The level's description.
+        data (str): The level's data.
+
+    ### Extra Properties:
+        revision (int): The level revision.
+    """
+    def __init__(self, title, author, description, data, revision=None):
         self.title = title
         self.author = author
         self.description = description
-        self.revision = revision
+        self.revision = revision if revision else 0
         self.data = data if data else ""
         self.objects = ""
         self.add_object(GeometryDashObject(0, 0, 0, 0, None)) # dummy object
@@ -99,6 +124,15 @@ class GeometryDashLevel:
 
     def add_object(self, obj: GeometryDashObject) -> None:
         self.objects += obj.generate_string()
+
+# class RG90Tm90YXRpb24:
+#     def __init__(self, dict):
+#         for k, v in dict.items():
+#             if isinstance(v, dict):
+#                 v = RG90Tm90YXRpb24(v)
+#             if isinstance(v, list):
+#                 v = [RG90Tm90YXRpb24(i) if isinstance(i, dict) else i for i in v]
+#             setattr(self, k, v)
 
 def kbmb(size) -> str:
     if size < 1048576:
@@ -407,9 +441,11 @@ def decode_level_string(data: str):
             }))
     return level_objects
 
+# objectID = RG90Tm90YXRpb24(json.load(open(Path(".")/"resources"/"json"/"id.json", "r")))
+
 LocalLevels = []
 
-class getLevels:
+class Z2V0TGV2ZWxz:
     def __init__(self):
         pass
     def find(self, title):
@@ -417,12 +453,15 @@ class getLevels:
     def findall(self, title):
         return [l for l in LocalLevels if l.title == title]
     
-class getXML:
+class Z2V0WE1M:
     def __init__(self):
         self.decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
         self.xml = parse_xml(self.decoded)
     def prettifyXML(self):
         return minidom.parseString(ET.tostring(self.xml)).toprettyxml(indent="\t", encoding='utf-8').decode('utf-8')
+    
+def getLevels(): return Z2V0TGV2ZWxz()
+def getXML(): return Z2V0WE1M()
 
 def get_levels():
     decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
@@ -474,7 +513,7 @@ def get_levels():
         desc = level_description[i]
         revision = level_revision[i]
         data = level_data[i]
-        LocalLevels.append(GeometryDashLevel(title, author, desc, revision, data))
+        LocalLevels.append(GeometryDashLevel(title, author, desc, data, revision=revision))
 get_levels()
 
 def main():
