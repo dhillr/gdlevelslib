@@ -14,6 +14,12 @@ print("##########  by poyo52596kirby")
 print("#        #  Version 1.0.4a")
 print("##########\n")
 
+class Color:
+    def __init__(self, r, g, b):
+        self.r = r
+        self.g = g
+        self.b = b
+
 class GeometryDashObject:
     """
     This is a class for Geometry Dash objects.
@@ -89,11 +95,14 @@ class GeometryDashLevel:
     ### Extra Properties:
         revision (int): The level revision.
     """
-    def __init__(self, title, author, description, data, revision=None):
+    def __init__(self, title, author, description, data, revision=None, speed=None, gamemode=None, color_channels=None):
         self.title = title
         self.author = author
         self.description = description
         self.revision = revision if revision else 0
+        self.speed = speed if speed else None
+        self.gamemode = gamemode if gamemode else None
+        self.color_channels = color_channels if color_channels else None
         self.data = data if data else ""
         self.objects = ""
         self.add_object(GeometryDashObject(0, 0, 0, 0, None)) # dummy object
@@ -114,25 +123,23 @@ class GeometryDashLevel:
         return int(level_numbers[len(level_numbers)-1])
     
     def generate_string(self, xml) -> str:
-        self.data = base64.urlsafe_b64encode(gz.compress(self.objects.encode('utf-8'))).decode('utf-8')
+        initial_lvlstring = ""
+
+        if self.speed:
+            initial_lvlstring += f"kA4,{self.speed},"
+        if self.gamemode:
+            initial_lvlstring += f"kA2,{self.gamemode},"
+
+        self.data = initial_lvlstring + base64.urlsafe_b64encode(gz.compress(self.objects.encode('utf-8'))).decode('utf-8')
         key_prefix = f"k_{str(self.get_max_number(xml) + 1)}"
         use_desc = False
-        if use_desc:
-            return f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k3</k><s>{base64.b64encode(self.description.encode('utf-8')).decode('utf-8')}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r></d></root>"
-        else:
-            return f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r></d></root>"
+        base_str = f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k3</k><s>{base64.b64encode(self.description.encode('utf-8')).decode('utf-8')}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>" if use_desc else f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>"
+        base_str += f"</d></root>"
+        return base_str
 
     def add_object(self, obj: GeometryDashObject) -> None:
         self.objects += obj.generate_string()
 
-# class RG90Tm90YXRpb24:
-#     def __init__(self, dict):
-#         for k, v in dict.items():
-#             if isinstance(v, dict):
-#                 v = RG90Tm90YXRpb24(v)
-#             if isinstance(v, list):
-#                 v = [RG90Tm90YXRpb24(i) if isinstance(i, dict) else i for i in v]
-#             setattr(self, k, v)
 
 def kbmb(size) -> str:
     if size < 1048576:
@@ -441,11 +448,20 @@ def decode_level_string(data: str):
             }))
     return level_objects
 
-# objectID = RG90Tm90YXRpb24(json.load(open(Path(".")/"resources"/"json"/"id.json", "r")))
+class formatter:
+    def __init__(self, dictionary):
+        for k, v in dictionary.items():
+            if isinstance(v, dict):
+                v = formatter(v)
+            if isinstance(v, list):
+                v = [formatter(i) if isinstance(i, dict) else i for i in v]
+            setattr(self, k, v)
+
+objectID = formatter(json.load(open(Path(".")/"resources"/"json"/"id.json", "r")))
 
 LocalLevels = []
 
-class Z2V0TGV2ZWxz:
+class __getLevels:
     def __init__(self):
         pass
     def find(self, title):
@@ -453,15 +469,15 @@ class Z2V0TGV2ZWxz:
     def findall(self, title):
         return [l for l in LocalLevels if l.title == title]
     
-class Z2V0WE1M:
+class __getXML:
     def __init__(self):
         self.decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
         self.xml = parse_xml(self.decoded)
     def prettifyXML(self):
         return minidom.parseString(ET.tostring(self.xml)).toprettyxml(indent="\t", encoding='utf-8').decode('utf-8')
     
-def getLevels(): return Z2V0TGV2ZWxz()
-def getXML(): return Z2V0WE1M()
+def getLevels(): return __getLevels()
+def getXML(): return __getXML()
 
 def get_levels():
     decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))

@@ -7,16 +7,45 @@
         "block1_empty": 5,
         "block1_edge3": 6,
         "block1_edgeH": 7,
-        "slab": 40
+        "slab": 40,
+        "platform_center": 62,
+        "platform_edges": 63,
+        "platform_corner": 64,
+        "platform_edgeR": 65,
+        "platform_edgeL": 66,
+        "platform_single": 68,
+        "block2_edgeAll": 69,
+        "block2_edge": 70,
+        "block2_edge2": 71,
+        "block2_corner": 72,
+        "block2_empty": 73,
+        "block2_edge3": 74,
+        "block2_edgeH": 75,
+        "block3_edgeAll": 76,
+        "block3_edge": 77,
+        "block3_edge2": 78,
+        "block3_empty": 80,
+        "block3_edge3": 81,
+        "block3_edgeH": 82,
+        "block1_edgeAll": 83,
+        "block4_edgeAll": 90,
+        "block4_edge": 91,
+        "block4_edge2": 92,
+        "block4_corner": 93,
+        "block4_empty": 94,
+        "block4_edge3": 95,
+        "block4_edgeH": 96
     },
 
     "spikes": {
         "spike": 8,
-        "flat_spike": 39
+        "flat_spike": 39,
+        "small_spike": 103
     },
 
     "ground_spikes": {
-        "ground_spike": 9
+        "ground_spike": 9,
+        "ground_spike1": 61
     },
 
     "portals": {
@@ -26,7 +55,9 @@
         "ship_portal": 13,
         "mirror_portal": 45,
         "mirror_portal_exit": 46,
-        "ball_portal": 47
+        "ball_portal": 47,
+        "normal_size_portal": 99,
+        "mini_size_portal": 101
     },
 
     "deco": {
@@ -37,7 +68,13 @@
         "ground_deco2": 19,
         "ground_deco_meduim": 20,
         "ground_deco_small": 21,
-        "chain1": 41
+        "chain1": 41,
+        "cloud_big": 48,
+        "cloud_small": 49,
+        "gear_big": 85,
+        "gear_medium": 86,
+        "gear_small": 87,
+        "gear_tiny": 97
     },
 
     "triggers": {
@@ -52,7 +89,12 @@
         "col_ground": 30,
         "start_pos": 31,
         "trail_enable": 32,
-        "trail_disable": 33
+        "trail_disable": 33,
+        "enter_shaky": 55,
+        "enter_diag_up": 56,
+        "enter_diag_down": 57,
+        "enter_up_sym": 58,
+        "enter_down_sym": 59
     },
 
     "buggy": {
@@ -60,10 +102,27 @@
     },
 
     "orbs": {
-        "yellow_orb": 36
+        "yellow_orb": 36,
+        "blue_orb": 84
     },
 
     "pads": {
-        "yellow_pad": 35
+        "yellow_pad": 35,
+        "blue_pad": 67
+    },
+
+    "pulsing_objects": {
+        "pulsing_circle": 50,
+        "pulsing_circle_outline": 51,
+        "pulsing_heart": 52,
+        "pulsing_diamond": 53,
+        "pulsing_star": 54,
+        "pulsing_note": 60
+    },
+
+    "sawblades": {
+        "sawblade_big": 88,
+        "sawblade_medium": 89,
+        "sawblade_small": 98
     }
 }
