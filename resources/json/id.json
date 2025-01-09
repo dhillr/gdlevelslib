@@ -34,7 +34,15 @@
         "block4_corner": 93,
         "block4_empty": 94,
         "block4_edge3": 95,
-        "block4_edgeH": 96
+        "block4_edgeH": 96,
+        "block5_edgeAll": 116,
+        "block5_edge": 117,
+        "block5_edge2": 118,
+        "block5_corner": 119,
+        "block5_empty": 120,
+        "block5_edge3": 121,
+        "block5_edgeH": 122,
+        "breakable_block": 143
     },
 
     "spikes": {
@@ -42,12 +50,13 @@
         "flat_spike": 39,
         "small_spike": 103
     },
-
+    
     "ground_spikes": {
         "ground_spike": 9,
-        "ground_spike1": 61
+        "ground_spike1": 61,
+        "bush_spike": 135
     },
-
+    
     "portals": {
         "normal_gravity_portal": 10,
         "upsidedown_gravity_portal": 11,
@@ -57,9 +66,10 @@
         "mirror_portal_exit": 46,
         "ball_portal": 47,
         "normal_size_portal": 99,
-        "mini_size_portal": 101
+        "mini_size_portal": 101,
+        "ufo_portal": 111
     },
-
+    
     "deco": {
         "pole_big": 15,
         "pole_medium": 16,
@@ -69,14 +79,33 @@
         "ground_deco_meduim": 20,
         "ground_deco_small": 21,
         "chain1": 41,
-        "cloud_big": 48,
-        "cloud_small": 49,
-        "gear_big": 85,
-        "gear_medium": 86,
-        "gear_small": 87,
-        "gear_tiny": 97
+        "cloud1_big": 48,
+        "cloud1_small": 49,
+        "gear1_big": 85,
+        "gear1_medium": 86,
+        "gear1_small": 87,
+        "gear1_tiny": 97,
+        "chain2_big": 106,
+        "chain2_small": 107,
+        "chain1_small": 110,
+        "blocky_big": 113,
+        "blocky_medium": 114,
+        "blocky_small": 115,
+        "curly1": 123,
+        "curly2": 124,
+        "curly3": 125,
+        "curly4": 126,
+        "curly5": 127,
+        "curly_big": 128,
+        "cloud2_small": 129,
+        "cloud2_big": 130,
+        "cloud2_tiny": 131,
+        "diamond": 134,
+        "gear2_big": 137,
+        "gear2_medium": 138,
+        "gear2_small": 139
     },
-
+    
     "triggers": {
         "dont_enter": 22,
         "enter_up": 23,
@@ -94,35 +123,52 @@
         "enter_diag_up": 56,
         "enter_diag_down": 57,
         "enter_up_sym": 58,
-        "enter_down_sym": 59
+        "enter_down_sym": 59,
+        "col_line": 104,
+        "col_obj": 105
     },
-
+    
     "buggy": {
-        "buggy_startpos": 34
+        "solid_startpos": 34
     },
-
+    
     "orbs": {
         "yellow_orb": 36,
-        "blue_orb": 84
+        "blue_orb": 84,
+        "pink_orb": 141
     },
-
+    
     "pads": {
         "yellow_pad": 35,
-        "blue_pad": 67
+        "blue_pad": 67,
+        "pink_pad": 140
     },
-
+    
     "pulsing_objects": {
         "pulsing_circle": 50,
         "pulsing_circle_outline": 51,
         "pulsing_heart": 52,
         "pulsing_diamond": 53,
         "pulsing_star": 54,
-        "pulsing_note": 60
+        "pulsing_note": 60,
+        "pulsing_arrow": 132,
+        "pulsing_exclam": 133,
+        "pulsing_question": 136,
+        "pulsing_square": 148,
+        "pulsing_spike": 149,
+        "pulsing_x": 150
     },
-
+    
     "sawblades": {
         "sawblade_big": 88,
         "sawblade_medium": 89,
         "sawblade_small": 98
+    },
+    
+    "memory": {
+        "memory_spike": 144,
+        "memory_small_spike": 145,
+        "memory_block": 146,
+        "memory_slab": 147
     }
 }

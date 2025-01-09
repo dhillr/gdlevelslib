@@ -95,14 +95,46 @@ class GeometryDashLevel:
     ### Extra Properties:
         revision (int): The level revision.
     """
-    def __init__(self, title, author, description, data, revision=None, speed=None, gamemode=None, color_channels=None):
+    def __init__(self, title, author, description, data, revision=None, speed=None, gamemode=None, color_channels=None, song_offset=None, song_fadeIn=None, song_fadeOut=None, guidelines=None, bg_texture=None, ground_texture=None, line=None, font=None, mini=None, dual=None, twoPlayerMode=None, upsideDown=None):
         self.title = title
         self.author = author
         self.description = description
         self.revision = revision if revision else 0
-        self.speed = speed if speed else None
-        self.gamemode = gamemode if gamemode else None
-        self.color_channels = color_channels if color_channels else None
+        self.speed = speed if speed else ""
+        if (gamemode == None):
+            self.gamemode = ""
+        else:
+            self.gamemode = gamemode
+            match self.gamemode:
+                case "cube":
+                    self.gamemode = 0
+                case "ship":
+                    self.gamemode = 1
+                case "ball":
+                    self.gamemode = 2
+                case "ufo":
+                    self.gamemode = 3
+                case "wave":
+                    self.gamemode = 4
+                case "robot":
+                    self.gamemode = 5
+                case "spider":
+                    self.gamemode = 6
+                case "swing":
+                    self.gamemode = 7
+        self.color_channels = color_channels if color_channels else ""
+        self.song_offset = song_offset if song_offset else ""
+        self.song_fadeIn = 1 if song_fadeIn else 0
+        self.song_fadeOut = 1 if song_fadeOut else 0
+        self.guidelines = guidelines if guidelines else ""
+        self.bg_texture = bg_texture if bg_texture else ""
+        self.ground_texture = ground_texture if ground_texture else ""
+        self.line = line if line else ""
+        self.font = font if font else ""
+        self.mini = 1 if mini else 0
+        self.dual = 1 if dual else 0
+        self.twoPlayerMode = 1 if twoPlayerMode else 0
+        self.upsideDown = 1 if upsideDown else 0
         self.data = data if data else ""
         self.objects = ""
         self.add_object(GeometryDashObject(0, 0, 0, 0, None)) # dummy object
@@ -123,14 +155,9 @@ class GeometryDashLevel:
         return int(level_numbers[len(level_numbers)-1])
     
     def generate_string(self, xml) -> str:
-        initial_lvlstring = ""
+        initial_lvlstring = f"kS38,{self.color_channels},kA13,{self.song_offset},kA15,{self.song_fadeIn},kA16,{self.song_fadeOut},kA14,{self.guidelines},kA6,{self.bg_texture},kA7,{self.ground_texture},kA17,{self.line},kA18,{self.font},kS39,0,kA2,{self.gamemode},kA3,{self.mini},kA8,{self.dual},kA4,{self.speed},kA9,0,kA10,{self.twoPlayerMode},kA11,{self.upsideDown};"
 
-        if self.speed:
-            initial_lvlstring += f"kA4,{self.speed},"
-        if self.gamemode:
-            initial_lvlstring += f"kA2,{self.gamemode},"
-
-        self.data = initial_lvlstring + base64.urlsafe_b64encode(gz.compress(self.objects.encode('utf-8'))).decode('utf-8')
+        self.data = base64.urlsafe_b64encode(gz.compress(initial_lvlstring.encode('utf-8') + self.objects.encode('utf-8'))).decode('utf-8')
         key_prefix = f"k_{str(self.get_max_number(xml) + 1)}"
         use_desc = False
         base_str = f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k3</k><s>{base64.b64encode(self.description.encode('utf-8')).decode('utf-8')}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>" if use_desc else f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>"
