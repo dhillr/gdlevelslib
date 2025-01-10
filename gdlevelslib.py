@@ -14,6 +14,67 @@ print("##########  by poyo52596kirby")
 print("#        #  Version 1.0.4a")
 print("##########\n")
 
+class OfficialSong:
+    def __init__(self, ID=None):
+        self.ID = ID if ID else None
+
+    def getSongByID(self, ID):
+        return OfficialSong(ID)
+    
+    def getSongByName(self, name):
+        match name:
+            case "Stereo Madness":
+                return OfficialSong(0)
+            case "Back on Track":
+                return OfficialSong(1)
+            case "Polargeist":
+                return OfficialSong(2)
+            case "Dry Out":
+                return OfficialSong(3)
+            case "Base After Base":
+                return OfficialSong(4)
+            case "Cant Let Go":
+                return OfficialSong(5)
+            case "Jumper":
+                return OfficialSong(6)
+            case "Time Machine":
+                return OfficialSong(7)
+            case "Cycles":
+                return OfficialSong(8)
+            case "xStep":
+                return OfficialSong(9)
+            case "Clutterfunk":
+                return OfficialSong(10)
+            case "Theory of Everything":
+                return OfficialSong(11)
+            case "Electroman Adventures":
+                return OfficialSong(12)
+            case "Clubstep":
+                return OfficialSong(13)
+            case "Electrodynamix":
+                return OfficialSong(14)
+            case "Hexagon Force":
+                return OfficialSong(15)
+            case "Blast Processing":
+                return OfficialSong(16)
+            case "Theory of Everything 2":
+                return OfficialSong(17)
+            case "Geometrical Dominator":
+                return OfficialSong(18)
+            case "Deadlocked":
+                return OfficialSong(19)
+            case "Fingerdash":
+                return OfficialSong(20)
+            case "Dash":
+                return OfficialSong(21)
+            
+class CustomSong:
+    def __init__(self, ID=None):
+        self.ID = ID if ID else None
+
+    def getSongByID(self, ID):
+        return CustomSong(ID) 
+
 class Color:
     def __init__(self, r, g, b):
         self.r = r
@@ -95,7 +156,7 @@ class GeometryDashLevel:
     ### Extra Properties:
         revision (int): The level revision.
     """
-    def __init__(self, title, author, description, data, revision=None, speed=None, gamemode=None, color_channels=None, song_offset=None, song_fadeIn=None, song_fadeOut=None, guidelines=None, bg_texture=None, ground_texture=None, line=None, font=None, mini=None, dual=None, twoPlayerMode=None, upsideDown=None):
+    def __init__(self, title, author, description, data, revision=None, speed=None, gamemode=None, color_channels=None, song_offset=None, song_fadeIn=None, song_fadeOut=None, guidelines=None, bg_texture=None, ground_texture=None, line=None, font=None, mini=None, dual=None, twoPlayerMode=None, upsideDown=None, song=None, bg_color: Color=None, ground_color: Color=None):
         self.title = title
         self.author = author
         self.description = description
@@ -135,9 +196,11 @@ class GeometryDashLevel:
         self.dual = 1 if dual else 0
         self.twoPlayerMode = 1 if twoPlayerMode else 0
         self.upsideDown = 1 if upsideDown else 0
+        self.song = song if song else ""
+        if bg_color: self.color_channels += f"1_{bg_color.r}_2_{bg_color.g}_3_{bg_color.b}_11_255_12_255_13_255_4_-1_6_1000_7_1_15_1_18_0_8_1|"
+        if ground_color: self.color_channels += f"1_{ground_color.r}_2_{ground_color.g}_{ground_color.b}_0_11_255_12_255_13_255_4_-1_6_1001_7_1_15_1_18_0_8_1|"
         self.data = data if data else ""
         self.objects = ""
-        self.add_object(GeometryDashObject(0, 0, 0, 0, None)) # dummy object
 
     def __str__(self):
         return f"GeometryDashLevel: title={self.title}, author={self.author}, description={self.description}, revision={self.revision}, data={self.data}"
@@ -161,6 +224,8 @@ class GeometryDashLevel:
         key_prefix = f"k_{str(self.get_max_number(xml) + 1)}"
         use_desc = False
         base_str = f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k3</k><s>{base64.b64encode(self.description.encode('utf-8')).decode('utf-8')}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>" if use_desc else f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>"
+        if self.song and isinstance(self.song, OfficialSong): base_str += f"<k>k8</k><i>{self.song.ID}</i>" if isinstance(self.song, OfficialSong) else ""
+        if self.song and isinstance(self.song, CustomSong): base_str + f"<k>k45</k><i>{self.song.ID}</i>" if isinstance(self.song, CustomSong) else ""
         base_str += f"</d></root>"
         return base_str
 

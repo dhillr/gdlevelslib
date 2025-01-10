@@ -8,7 +8,7 @@
         [!] GDLevelsLib is still in development, so this example may not work as expected or the level may appear bugged.
         [!] If you encounter any issues, please report them in the issues section of the repository.
     --------------------------------------------------------
-        GDLevelsLib is open source and is available on GitHub. https://github.com/dhillr/gdlevelslib-coming-soon
+        GDLevelsLib is open source and is available on GitHub. https://github.com/dhillr/gdlevelslib
 
 """
 
