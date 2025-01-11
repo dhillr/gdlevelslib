@@ -156,7 +156,26 @@ class GeometryDashLevel:
     ### Extra Properties:
         revision (int): The level revision.
     """
-    def __init__(self, title, author, description, data, revision=None, speed=None, gamemode=None, color_channels=None, song_offset=None, song_fadeIn=None, song_fadeOut=None, guidelines=None, bg_texture=None, ground_texture=None, line=None, font=None, mini=None, dual=None, twoPlayerMode=None, upsideDown=None, song=None, bg_color: Color=None, ground_color: Color=None):
+    def __init__(self, title: str, author: str, description: str, data: str, 
+                revision: int=None, 
+                speed: int=None, 
+                gamemode=None, 
+                color_channels=None,
+                song_offset: float=None,
+                song_fadeIn: bool=None,
+                song_fadeOut: bool=None,
+                guidelines=None,
+                bg_texture: int=None,
+                ground_texture: int=None,
+                line=None,
+                font=None,
+                mini=None,
+                dual=None,
+                twoPlayerMode: bool=None,
+                upsideDown: bool=None,
+                song=None, 
+                bg_color: Color= None, 
+                ground_color: Color=None):
         self.title = title
         self.author = author
         self.description = description
