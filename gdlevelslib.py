@@ -18,10 +18,13 @@ class OfficialSong:
     def __init__(self, ID=None):
         self.ID = ID if ID else None
 
+    def __str__(self):
+        return f"OfficialSong: ID={self.ID}"
+
     def getSongByID(self, ID):
         return OfficialSong(ID)
     
-    def getSongByName(self, name):
+    def getSongByName(self, name: str):
         match name:
             case "Stereo Madness":
                 return OfficialSong(0)
@@ -72,6 +75,9 @@ class CustomSong:
     def __init__(self, ID=None):
         self.ID = ID if ID else None
 
+    def __str__(self):
+        return f"CustomSong: ID={self.ID}"
+
     def getSongByID(self, ID):
         return CustomSong(ID) 
 
@@ -95,47 +101,115 @@ class GeometryDashObject:
         textValue (str): The object's text value.
     """
 
-    def __init__(self, objectID, x, y, dir, other, textValue=None):
+    def __init__(self, objectID: int, x: int, y: int, dir, other=None, 
+                    flipX: int=None,
+                    flipY: int=None,
+                    yellowLayer: int=None,
+                    baseHSV: float=None,
+                    detailHSV: float=None,
+                    copyColorID: int=None,
+                    zLayer: int=None,
+                    scale: float=None,
+                    groupParent=None,
+                    editorLayer1: int=None,
+                    editorLayer2: int=None,
+                    copyOpacity: int=None,
+                    colBlending: int=None,
+                    targetGroup: int=None,
+                    extra=None, # (list?)
+                    baseHSVEnabled: int=None,
+                    detailHSVEnabled: int=None,
+                    editorLayer3: int=None,
+                    base=None, # (int or color)
+                    detail=None, # (int or color)
+                    textValue=None, # (any)
+                    touchTriggered: int=None,
+                    coinID: int=None,
+                    fadeIn: int=None,
+                    groups: list=[],
+                    lockPlayerX: int=None
+                ):
         self.objectID = objectID
         self.x = x
         self.y = y
         self.dir = dir
-        self.other = other if other else None
+        self.flipX = flipX if flipX else None
+        self.flipY = flipY if flipY else None
+        self.yellowLayer = yellowLayer if yellowLayer else None
+        self.baseHSV = baseHSV if baseHSV else None
+        self.detailHSV = detailHSV if detailHSV else None
+        self.copyColorID = copyColorID if copyColorID else None
+        self.zLayer = zLayer if zLayer else None
+        self.scale = scale if scale else None
+        self.groupParent = groupParent if groupParent else None
+        self.editorLayer1 = editorLayer1 if editorLayer1 else None
+        self.editorLayer2 = editorLayer2 if editorLayer2 else None
+        self.copyOpacity = copyOpacity if copyOpacity else None
+        self.colBlending = colBlending if colBlending else None
+        self.targetGroup = targetGroup if targetGroup else None
+        self.extra = extra if extra else None
+        self.baseHSVEnabled = baseHSVEnabled if baseHSVEnabled else None
+        self.detailHSVEnabled = detailHSVEnabled if detailHSVEnabled else None
+        self.editorLayer3 = editorLayer3 if editorLayer3 else None
+        self.base = base if base else None
+        self.detail = detail if detail else None
         self.textValue = textValue if textValue else None
+        self.touchTriggered = touchTriggered if touchTriggered else None
+        self.coinID = coinID if coinID else None
+        self.fadeIn = fadeIn if fadeIn else None
+        self.groups = groups if groups else []
+        self.lockPlayerX = lockPlayerX if lockPlayerX else None
+        self.other = other if other else None
+        self.textValue = str(textValue) if textValue else None
 
+    def __str__(self):
+        base_str = f"GeometryDashObject: objectID={self.objectID}, x={self.x}, y={self.y}, dir={self.dir}"
+        if self.textValue:
+            base_str += f", textValue={self.textValue}"
+        if self.groups:
+            base_str += f", groups={self.groups}"
+        base_str += f", other={self.other}"
+        return base_str
+    
+    def __repr__(self):
+        return self.__str__() + "\n"
+    
     def generate_string(self) -> str:
-        base_string = f"1,{self.objectID},2,{self.x},3,{self.y},6,{self.dir},"
+        base_string = f"1,{self.objectID},2,{self.x},3,{self.y},"
+        
+        if self.flipX:
+            base_string += f"4,{self.flipX},"
+        if self.flipY:
+            base_string += f"5,{self.flipY}," 
+        base_string += f"6,{self.dir},"
+        if self.yellowLayer:
+            base_string += f"7,{self.yellowLayer},"
+        if self.baseHSV:
+            base_string += f"8,{self.baseHSV},"
+        if self.detailHSV:    
+            base_string += f"9,{self.detailHSV},"
+        if self.copyColorID:
+            base_string += f"10,{self.copyColorID},"
+        if self.zLayer:
+            base_string += f"11,{self.zLayer},"
+        if self.textValue:
+            base_string += f"31,{base64.b64encode(self.textValue.encode('utf-8')).decode('utf-8')},"
+        if self.fadeIn:
+            base_string += f"36,{self.fadeIn},"
+        if self.groups: 
+            if len(self.groups) > 1:
+                base_string += "57,"
+                for g in self.groups:
+                    base_string += f"{g}."
+                base_string = base_string.removesuffix(".") + ","
+            else:
+                base_string += f"57,{self.groups[0]},"
+        if self.lockPlayerX:
+            base_string += f"155,{self.lockPlayerX},"
+
         if self.other:
-            if self.other["flipX"]:
-                base_string += f"4,{self.other['flipX']},"
-
-            if self.other["flipY"]:
-                base_string += f"5,{self.other['flipY']}," 
-
-            if self.other["yellowLayer"]:
-                base_string += f"7,{self.other['yellowLayer']},"
-
-            if self.other["baseHSV"]:
-                base_string += f"8,{self.other['baseHSV']},"
-
-            if self.other["detailHSV"]:    
-                base_string += f"9,{self.other['detailHSV']},"
-
-            if self.other["copyColorID"]:
-                base_string += f"10,{self.other['copyColorID']},"
-
-            if self.other["zLayer"]:
-                base_string += f"11,{self.other['zLayer']},"
-
-            if self.textValue:
-                base_string += f"31,{self.textValue},"
-
-            if self.other["fadeIn"]:
-                base_string += f"36,{self.other['fadeIn']},"
-
-            if self.other["lockPlayerX"]:
-                base_string += f"155,{self.other['lockPlayerX']},"
-
+            for i in range(len(self.other)):
+                base_string += f"{self.other[i][0]},{self.other[i][1]},"
         return base_string.removesuffix(",") + ";"
     
     def snap_to_grid(self, snap=30):
@@ -157,25 +231,27 @@ class GeometryDashLevel:
         revision (int): The level revision.
     """
     def __init__(self, title: str, author: str, description: str, data: str, 
-                revision: int=None, 
-                speed: int=None, 
-                gamemode=None, 
-                color_channels=None,
-                song_offset: float=None,
-                song_fadeIn: bool=None,
-                song_fadeOut: bool=None,
-                guidelines=None,
-                bg_texture: int=None,
-                ground_texture: int=None,
-                line=None,
-                font=None,
-                mini=None,
-                dual=None,
-                twoPlayerMode: bool=None,
-                upsideDown: bool=None,
-                song=None, 
-                bg_color: Color= None, 
-                ground_color: Color=None):
+                    revision: int=None, 
+                    speed: int=None, 
+                    gamemode=None, 
+                    color_channels=None,
+                    song_offset: float=None,
+                    song_fadeIn: bool=None,
+                    song_fadeOut: bool=None,
+                    guidelines=None,
+                    bg_texture: int=None,
+                    ground_texture: int=None,
+                    line=None,
+                    font=None,
+                    mini=None,
+                    dual=None,
+                    twoPlayerMode: bool=None,
+                    upsideDown: bool=None,
+                    song=None, 
+                    bg_color: Color= None, 
+                    ground_color: Color=None,
+                    verified: bool=None,
+                ):
         self.title = title
         self.author = author
         self.description = description
@@ -218,6 +294,7 @@ class GeometryDashLevel:
         self.song = song if song else ""
         if bg_color: self.color_channels += f"1_{bg_color.r}_2_{bg_color.g}_3_{bg_color.b}_11_255_12_255_13_255_4_-1_6_1000_7_1_15_1_18_0_8_1|"
         if ground_color: self.color_channels += f"1_{ground_color.r}_2_{ground_color.g}_{ground_color.b}_0_11_255_12_255_13_255_4_-1_6_1001_7_1_15_1_18_0_8_1|"
+        self.verified = 1 if verified else 0
         self.data = data if data else ""
         self.objects = ""
 
@@ -239,17 +316,36 @@ class GeometryDashLevel:
     def generate_string(self, xml) -> str:
         initial_lvlstring = f"kS38,{self.color_channels},kA13,{self.song_offset},kA15,{self.song_fadeIn},kA16,{self.song_fadeOut},kA14,{self.guidelines},kA6,{self.bg_texture},kA7,{self.ground_texture},kA17,{self.line},kA18,{self.font},kS39,0,kA2,{self.gamemode},kA3,{self.mini},kA8,{self.dual},kA4,{self.speed},kA9,0,kA10,{self.twoPlayerMode},kA11,{self.upsideDown};"
 
-        self.data = base64.urlsafe_b64encode(gz.compress(initial_lvlstring.encode('utf-8') + self.objects.encode('utf-8'))).decode('utf-8')
+        if (not self.data): self.data = base64.urlsafe_b64encode(gz.compress(initial_lvlstring.encode('utf-8') + self.objects.encode('utf-8'))).decode('utf-8')
         key_prefix = f"k_{str(self.get_max_number(xml) + 1)}"
         use_desc = False
         base_str = f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k3</k><s>{base64.b64encode(self.description.encode('utf-8')).decode('utf-8')}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>" if use_desc else f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>"
         if self.song and isinstance(self.song, OfficialSong): base_str += f"<k>k8</k><i>{self.song.ID}</i>" if isinstance(self.song, OfficialSong) else ""
-        if self.song and isinstance(self.song, CustomSong): base_str + f"<k>k45</k><i>{self.song.ID}</i>" if isinstance(self.song, CustomSong) else ""
+        if self.song and isinstance(self.song, CustomSong): base_str += f"<k>k45</k><i>{self.song.ID}</i>" if isinstance(self.song, CustomSong) else ""
+        if self.verified: base_str += f"<k>k14</k><t />"
         base_str += f"</d></root>"
         return base_str
 
     def add_object(self, obj: GeometryDashObject) -> None:
         self.objects += obj.generate_string()
+    
+    def add_objects(self, objects: list) -> None:
+        for obj in objects:
+            self.add_object(obj)
+
+    def getObjects(self):
+        return decode_level_string(gz.decompress(base64.urlsafe_b64decode(self.data.removesuffix("=").join("=="))).decode('utf-8'))
+    
+    def findall_objects(self, ID=None, group=None):
+        found = []
+        objs = self.getObjects() if self.data else decode_level_string(self.objects)
+        for obj in objs:
+            if obj.objectID == ID:
+                found.append(obj)
+            if group in obj.groups:
+                found.append(obj)
+
+        return found
 
 
 def kbmb(size) -> str:
@@ -418,7 +514,7 @@ def add_level(level: GeometryDashLevel):
         print(f"[LOG] ERROR: Failed to encrypt XML code.")
         return False
 
-def decode_level_string(data: str):
+def decode_level_string(data: str) -> list:
     level_objects = []
     level_objects_str = data.split(";")
 
@@ -426,21 +522,23 @@ def decode_level_string(data: str):
         obj = l.split(",")
         if (len(obj) < 6):
             continue
+        if(obj[0].startswith("k")):
+            continue
         x = obj[1]
         y = obj[3]
         flipX = 0 # property 4
         flipY = 0 # property 5
         dir = 0 # property 6
-        yellowLayer = 0 # property 7
-        baseHSV = 0 # property 8
-        detailHSV = 0 # property 9
-        copyColorID = 0 # property 10
+        yellowLayer = 0 # property 7 (r)
+        baseHSV = 0 # property 8 (g)
+        detailHSV = 0 # property 9 (b)
+        copyColorID = 0 # property 10 (duration)
         zLayer = 0 # property 11
         scale = 0 # property 13
         groupParent = 0 # property 15
         editorLayer1 = 0 # property 17
         editorLayer2 = 0 # property 20
-        copyOpacity = 0 # property 21
+        copyOpacity = 0 # property 21 (base)
         colBlending = 0 # property 22
         targetGroup = 0 # property 23
         extra = 0 # property 24
@@ -452,111 +550,98 @@ def decode_level_string(data: str):
         textValue = 0 # property 31
         touchTriggered = 0 # property 32
         coinID = 0 # property 34
+        # property 35 is target opacity
         fadeIn = 0 # property 36
+        # property 51 is also target group??!?!
+        groups = [] # property 57
         lockPlayerX = 0 # property 155
+        other = []
 
         for i in range(int(round(len(obj)/2))):
-            if i > 3:
+            if i > 2:
                 if obj[(2*i+1)-1] == "6":
                     dir = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "7":
+                elif obj[(2*i+1)-1] == "7":
                     yellowLayer = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "8":
+                elif obj[(2*i+1)-1] == "8":
                     baseHSV = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "9":
+                elif obj[(2*i+1)-1] == "9":
                     detailHSV = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "10":
+                elif obj[(2*i+1)-1] == "10":
                     copyColorID = float(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "11":
+                elif obj[(2*i+1)-1] == "11":
                     zLayer = int(obj[2*i+1]) 
-
-                if obj[(2*i+1)-1] == "13":
+                elif obj[(2*i+1)-1] == "13":
                     scale = float(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "15":
+                elif obj[(2*i+1)-1] == "15":
                     groupParent = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "17":
+                elif obj[(2*i+1)-1] == "17":
                     editorLayer1 = int(obj[2*i+1])
-                
-                if obj[(2*i+1)-1] == "20":
+                elif obj[(2*i+1)-1] == "20":
                     editorLayer2 = int(obj[2*i+1])
-                
-                if obj[(2*i+1)-1] == "21":
+                elif obj[(2*i+1)-1] == "21":
                     copyOpacity = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "22":
+                elif obj[(2*i+1)-1] == "22":
                     colBlending = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "23":
+                elif obj[(2*i+1)-1] == "23":
                     targetGroup = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "24":
+                elif obj[(2*i+1)-1] == "24":
                     extra = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "25":
+                elif obj[(2*i+1)-1] == "25":
                     baseHSVEnabled = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "26":
+                elif obj[(2*i+1)-1] == "26":
                     detailHSVEnabled = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "28":
+                elif obj[(2*i+1)-1] == "28":
                     editorLayer3 = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "29":
+                elif obj[(2*i+1)-1] == "29":
                     base = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "30":
+                elif obj[(2*i+1)-1] == "30":
                     detail = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "31":
+                elif obj[(2*i+1)-1] == "31":
                     textValue = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "32":
+                elif obj[(2*i+1)-1] == "32":
                     touchTriggered = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "34":
+                elif obj[(2*i+1)-1] == "34":
                     coinID = int(obj[2*i+1])
-
-                if obj[(2*i+1)-1] == "36":
+                elif obj[(2*i+1)-1] == "36":
                     fadeIn = int(obj[2*i+1]) 
-
-                if obj[(2*i+1)-1] == "155":
+                elif obj[(2*i+1)-1] == "57":
+                    groups = obj[2*i+1].split(".")
+                elif obj[(2*i+1)-1] == "155":
                     lockPlayerX = int(obj[2*i+1]) 
-
+                else:
+                    other.append([obj[(2*i+1)-1], obj[2*i+1]])
+        
         if (len(obj) > 3):
-            level_objects.append(GeometryDashObject(x, y, obj[5], dir, {
-                flipX: flipX, 
-                flipY: flipY, 
-                yellowLayer: yellowLayer,
-                baseHSV: baseHSV,
-                detailHSV: detailHSV,
-                copyColorID: copyColorID,
-                zLayer: zLayer,
-                scale: scale,
-                groupParent: groupParent,
-                editorLayer1: editorLayer1,
-                editorLayer2: editorLayer2,
-                copyOpacity: copyOpacity,
-                colBlending: colBlending,
-                targetGroup: targetGroup,
-                extra: extra,
-                baseHSVEnabled: baseHSVEnabled,
-                detailHSVEnabled: detailHSVEnabled,
-                editorLayer3: editorLayer3,
-                base: base,
-                detail: detail,
-                textValue: textValue,
-                touchTriggered: touchTriggered,
-                coinID: coinID,
-                fadeIn: fadeIn,
-                lockPlayerX: lockPlayerX
-            }))
+            level_objects.append(GeometryDashObject(
+                x, y, obj[5], dir, 
+                    flipX=flipX,
+                    flipY=flipY,
+                    yellowLayer=yellowLayer,
+                    baseHSV=baseHSV,
+                    detailHSV=detailHSV,
+                    copyColorID=copyColorID,
+                    zLayer=zLayer,
+                    scale=scale,
+                    groupParent=groupParent,
+                    editorLayer1=editorLayer1,
+                    editorLayer2=editorLayer2,
+                    copyOpacity=copyOpacity,
+                    colBlending=colBlending,
+                    targetGroup=targetGroup,
+                    extra=extra,
+                    baseHSVEnabled=baseHSVEnabled,
+                    detailHSVEnabled=detailHSVEnabled,
+                    editorLayer3=editorLayer3,
+                    base=base,
+                    detail=detail,
+                    textValue=textValue,
+                    touchTriggered=touchTriggered,
+                    coinID=coinID,
+                    fadeIn=fadeIn,
+                    groups=groups,
+                    lockPlayerX=lockPlayerX,
+            other=other))
     return level_objects
 
 class formatter:
@@ -575,9 +660,9 @@ LocalLevels = []
 class __getLevels:
     def __init__(self):
         pass
-    def find(self, title):
+    def find(self, title) -> GeometryDashLevel:
         return [l for l in LocalLevels if l.title == title][0]
-    def findall(self, title):
+    def findall(self, title) -> list:
         return [l for l in LocalLevels if l.title == title]
     
 class __getXML:
@@ -640,7 +725,7 @@ def get_levels():
         desc = level_description[i]
         revision = level_revision[i]
         data = level_data[i]
-        LocalLevels.append(GeometryDashLevel(title, author, desc, data, revision=revision))
+        LocalLevels.append(GeometryDashLevel(title, author, desc, base64.urlsafe_b64encode(gz.compress(data.encode('utf-8'))).decode('utf-8'), revision=revision))
 get_levels()
 
 def main():

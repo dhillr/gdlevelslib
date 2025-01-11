@@ -67,7 +67,8 @@
         "ball_portal": 47,
         "normal_size_portal": 99,
         "mini_size_portal": 101,
-        "ufo_portal": 111
+        "ufo_portal": 111,
+        "swing_portal": 1933
     },
     
     "deco": {

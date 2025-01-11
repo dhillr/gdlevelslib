@@ -3,7 +3,7 @@
 
     This is an example of how to use GDLevelsLib to create a new level and add an object to it.
 
-    This will create a level  with 1'024 objects with different IDs and add it to Geometry Dash.
+    This will create a level with 1'024 objects with different IDs and add it to Geometry Dash.
     --------------------------------------------------------
         [!] GDLevelsLib is still in development, so this example may not work as expected or the level may appear bugged.
         [!] If you encounter any issues, please report them in the issues section of the repository.
