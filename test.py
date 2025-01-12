@@ -1,5 +1,6 @@
 import gdlevelslib as GD
 from gdlevelslib import GeometryDashLevel as gdlevel
+from math import floor
 
 class vec3:
     def __init__(self, x, y, z):
@@ -15,21 +16,25 @@ class Sphere:
 level = gdlevel("grtx integration test", "Example Username", ":)", None, revision=0, bg_color=GD.Color(0, 0, 0), ground_color=GD.Color(0, 0, 0))
 level.add_objects(GD.getLevels().find("ref", caseSensitive=False).getObjects())
 
-rd_objX = level.objfind(group=9992)
-rd_objY = level.objfind(group=9993)
-rd_objZ = level.objfind(group=9994)
+# sphere_objX = level.objfind(group=9996)
+# sphere_objY = level.objfind(group=9997)
+# sphere_objZ = level.objfind(group=9998)
+# sphere_objR = level.objfind(group=9995)
 
-sphere_objX = level.objfind(group=9996)
-sphere_objY = level.objfind(group=9997)
-sphere_objZ = level.objfind(group=9998)
-sphere_objR = level.objfind(group=9995)
+def add_pixel(level: gdlevel, x, y, o):
+    rd_objX = level.objfind(group=9992)
+    rd_objY = level.objfind(group=9993)
+    rd_objZ = level.objfind(group=9994)
+    rd_objX.setPropertyInLevel(479, floor(x*100), level)
+    rd_objY.setPropertyInLevel(479, floor(y*100), level)
+    rd_objZ.setPropertyInLevel(479, 100, level)
+    level.objfind(group=9992).y += o
+    level.objfind(group=9993).y += o
+    level.objfind(group=9994).y += o
 
-rd = vec3(rd_objX.getProperty(479, returnZero=True), 
-          rd_objY.getProperty(479, returnZero=True), 
-          rd_objZ.getProperty(479, returnZero=True))
-sphereObj = Sphere(vec3(sphere_objX.getProperty(479, returnZero=True), 
-                        sphere_objY.getProperty(479, returnZero=True), 
-                        sphere_objZ.getProperty(479, returnZero=True)), 
-                    sphere_objR.getProperty(479, returnZero=True))
-print(rd.x, rd.y, rd.z, "|", sphereObj.pos.x, sphereObj.pos.y, sphereObj.pos.z, sphereObj.r)
+for j in range(13):
+    for i in range(24):
+        add_pixel(level, i, j, i+j*48)
+
+GD.add_level(level)
 

@@ -6,6 +6,7 @@ import gzip as gz
 import base64
 import xml.etree.ElementTree as ET
 import os
+import sys
 import math
 import json
 from typing import Optional
@@ -18,7 +19,18 @@ print("##########  by poyo52596kirby")
 print("#        #  Version 1.0.4a")
 print("##########\n")
 
+if sys.platform == "darwin":
+    print("GDLevelsLib is not supported on macOS.")
+    raise SystemExit
+
 class OfficialSong:
+    """
+    This is a class for official songs.
+
+    ### Functions:
+        getSongByID(ID: int): Get a song by its ID.
+        getSongByName(name: str): Get a song by its name.
+    """
     def __init__(self, ID=None):
         self.ID = ID if ID else None
 
@@ -26,9 +38,15 @@ class OfficialSong:
         return f"OfficialSong: ID={self.ID}"
 
     def getSongByID(self, ID):
+        """
+        Get a song by its ID.
+        """
         return OfficialSong(ID)
     
     def getSongByName(self, name: str):
+        """
+        Get a song by its name.
+        """
         match name:
             case "Stereo Madness":
                 return OfficialSong(0)
@@ -76,6 +94,12 @@ class OfficialSong:
                 return OfficialSong(21)
             
 class CustomSong:
+    """
+    This is a class for custom songs.
+
+    ### Functions:
+        getSongByID(ID: int): Get a custom song by its ID.
+    """
     def __init__(self, ID=None):
         self.ID = ID if ID else None
 
@@ -83,9 +107,20 @@ class CustomSong:
         return f"CustomSong: ID={self.ID}"
 
     def getSongByID(self, ID):
+        """
+        Get a custom song by its ID.
+        """
         return CustomSong(ID) 
 
 class Color:
+    """
+    This is a class for colors.
+
+    ### Parameters:
+        r (int): The red value.
+        g (int): The green value.
+        b (int): The blue value.
+    """
     def __init__(self, r, g, b):
         self.r = r
         self.g = g
@@ -102,10 +137,38 @@ class GeometryDashObject:
         dir (int): The object's direction.
 
     ### Object Properties:
+        flipX (int): The object's flipX property.
+        flipY (int): The object's flipY property.
+        yellowLayer (int): The object's yellow layer.
+        baseHSV (float): The object's base HSV property.
+        detailHSV (float): The object's detail HSV property.
+        copyColorID (int): The object's copy color ID property.
+        zLayer (int): The object's Z layer.
+        scale (float): The object's scale.
+        groupParent (int): The object's group parent property.
+        editorLayer1 (int): The object's editor layer 1.
+        editorLayer2 (int): The object's editor layer 2.
+        copyOpacity (int): The object's copy opacity property.
+        colBlending (int): The object's color blending property.
+        targetGroup (int): The object's target group.
+        extra (list): The object's extra property.
+        baseHSVEnabled (int): The object's base HSV enabled property.
+        detailHSVEnabled (int): The object's detail HSV enabled property.
+        editorLayer3 (int): The object's editor layer 3.
+        base (int or color): The object's base color.
+        detail (int or color): The object's detail color.
         textValue (str): The object's text value.
+        touchTriggered (int): The object's touch triggered property.
+        coinID (int): The object's coin ID property.
+        fadeIn (int): The object's fade in property.
+        groups (list): The object's groups.
+        lockPlayerX (int): The object's lock player X property.
+
+    ### Extra Properties:
+        other (list): The object's other properties.
     """
 
-    def __init__(self, objectID: int, x: int, y: int, dir, other=None, 
+    def __init__(self, objectID: int, x: int, y: int, dir, other: list=None, 
                     flipX: int=None,
                     flipY: int=None,
                     yellowLayer: int=None,
@@ -134,8 +197,8 @@ class GeometryDashObject:
                     lockPlayerX: int=None
                 ):
         self.objectID = objectID
-        self.x = x
-        self.y = y
+        self.x = int(x)
+        self.y = int(y)
         self.dir = dir
         self.flipX = flipX if flipX else None
         self.flipY = flipY if flipY else None
@@ -236,6 +299,36 @@ class GeometryDashObject:
             if self.other[i][0] == str(p):
                 return self.other[i][1]
         return "0" if returnZero else None
+    
+    def setProperty(self, p: int, v: int) -> None:
+        """
+        Set a property of the object.
+
+        If there is no property with the specified ID, it will create a new one.
+
+        ### Parameters:
+            p (int): The property ID.
+            v (int): The property value.
+        """
+        for i in range(len(self.other)):
+            if self.other[i][0] == str(p):
+                self.other[i][1] = str(v)
+                return
+        self.other.append([str(p), str(v)])
+
+    def setPropertyInLevel(self, p: int, v: int, level) -> None:
+        """
+        Set a property of the object.
+
+        If there is no property with the specified ID, it will create a new one.
+
+        ### Parameters:
+            p (int): The property ID.
+            v (int): The property value.
+        """
+        level.remove_object(self)
+        self.setProperty(p, v)
+        level.add_object(self)
 
 class GeometryDashLevel:
     """
@@ -370,6 +463,12 @@ class GeometryDashLevel:
         Add an object to the level.
         """
         self.objects += obj.generate_string()
+
+    def remove_object(self, obj: GeometryDashObject) -> None:
+        """
+        Remove an object from the level.
+        """
+        self.objects = self.objects.replace(obj.generate_string(), "")
     
     def add_objects(self, objects: list[GeometryDashObject]) -> None:
         """
@@ -384,7 +483,7 @@ class GeometryDashLevel:
         """
         return decode_level_string(gz.decompress(base64.urlsafe_b64decode(self.data.removesuffix("=").join("=="))).decode('utf-8'))
     
-    def objfind(self, ID=None, group=None) -> GeometryDashObject:
+    def objfind(self, ID: int=None, group: list=None) -> GeometryDashObject:
         """
         Find an object with a specific property.
 
@@ -400,7 +499,7 @@ class GeometryDashLevel:
             if group and str(group) in obj.groups:
                 return obj
     
-    def objfindall(self, ID=None, group=None) -> list[GeometryDashObject]:
+    def objfindall(self, ID: int=None, group: list=None) -> list[GeometryDashObject]:
         """
         Find all objects with a specific property.
 
