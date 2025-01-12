@@ -1,3 +1,7 @@
+"""
+### GDLevelsLib
+A Python library for Geometry Dash levels.
+"""
 import gzip as gz
 import base64
 import xml.etree.ElementTree as ET
@@ -213,9 +217,25 @@ class GeometryDashObject:
         return base_string.removesuffix(",") + ";"
     
     def snap_to_grid(self, snap=30):
+        """
+        Snap the object to the grid.
+        """
         self.x = math.floor(self.x/snap)*snap+15
         self.y = math.floor(self.y/snap)*snap+15
         return self
+    
+    def getProperty(self, p: int, returnZero=False) -> str:
+        """
+        Get a property of the object.
+
+        ### Parameters:
+            p (int): The property ID.
+            returnZero (bool): Whether to return 0 if the property is not found.
+        """
+        for i in range(len(self.other)):
+            if self.other[i][0] == str(p):
+                return self.other[i][1]
+        return "0" if returnZero else None
 
 class GeometryDashLevel:
     """
@@ -229,6 +249,25 @@ class GeometryDashLevel:
 
     ### Extra Properties:
         revision (int): The level revision.
+        speed (int): The speed that the level starts with.
+        gamemode (int): The level's gamemode.
+        color_channels (int): The level's color channels.
+        song_offset (float): The level's song offset.
+        song_fadeIn (bool): The level's song fade in property.
+        song_fadeOut (bool): The level's song fade out property.
+        guidelines (int): The level's guidelines.
+        bg_texture (int): The level's background texture.
+        ground_texture (int): The level's ground texture.
+        line (int): The level's line.
+        font (int): The level's font.
+        mini (bool): The level's mini property.
+        dual (bool): The level's dual property.
+        twoPlayerMode (bool): The level's two player mode property.
+        upsideDown (bool): The level's upside down property.
+        song (OfficialSong or CustomSong): The level's song.
+        bg_color (Color): The level's background color.
+        ground_color (Color): The level's ground color.
+        verified (bool): The level's verified property. (Not recommended if you want your level to be rated ;P)
     """
     def __init__(self, title: str, author: str, description: str, data: str, 
                     revision: int=None, 
@@ -327,22 +366,55 @@ class GeometryDashLevel:
         return base_str
 
     def add_object(self, obj: GeometryDashObject) -> None:
+        """
+        Add an object to the level.
+        """
         self.objects += obj.generate_string()
     
-    def add_objects(self, objects: list) -> None:
+    def add_objects(self, objects: list[GeometryDashObject]) -> None:
+        """
+        Add a list of objects to the level.
+        """
         for obj in objects:
             self.add_object(obj)
 
-    def getObjects(self):
+    def getObjects(self) -> list[GeometryDashObject]:
+        """
+        Get all the objects in the level.
+        """
         return decode_level_string(gz.decompress(base64.urlsafe_b64decode(self.data.removesuffix("=").join("=="))).decode('utf-8'))
     
-    def findall_objects(self, ID=None, group=None):
+    def objfind(self, ID=None, group=None) -> GeometryDashObject:
+        """
+        Find an object with a specific property.
+
+        ### Parameters:
+            ID (int): The object ID.
+            group (int): The object group.
+        
+        """
+        objs = self.getObjects() if self.data else decode_level_string(self.objects)
+        for obj in objs:
+            if ID and int(obj.objectID) == ID:
+                return obj
+            if group and str(group) in obj.groups:
+                return obj
+    
+    def objfindall(self, ID=None, group=None) -> list[GeometryDashObject]:
+        """
+        Find all objects with a specific property.
+
+        ### Parameters:
+            ID (int): The object ID.
+            group (int): The object group.
+        
+        """
         found = []
         objs = self.getObjects() if self.data else decode_level_string(self.objects)
         for obj in objs:
-            if obj.objectID == ID:
+            if ID and int(obj.objectID) == ID:
                 found.append(obj)
-            if group in obj.groups:
+            if group and str(group) in obj.groups:
                 found.append(obj)
 
         return found
@@ -514,7 +586,7 @@ def add_level(level: GeometryDashLevel):
         print(f"[LOG] ERROR: Failed to encrypt XML code.")
         return False
 
-def decode_level_string(data: str) -> list:
+def decode_level_string(data: str) -> list[GeometryDashObject]:
     level_objects = []
     level_objects_str = data.split(";")
 
@@ -644,41 +716,44 @@ def decode_level_string(data: str) -> list:
             other=other))
     return level_objects
 
-class formatter:
-    def __init__(self, dictionary):
-        for k, v in dictionary.items():
+class GJFormatterC:
+    def __init__(self, d):
+        for k, v in d.items():
             if isinstance(v, dict):
-                v = formatter(v)
+                v = GJFormatterC(v)
             if isinstance(v, list):
-                v = [formatter(i) if isinstance(i, dict) else i for i in v]
+                v = [GJFormatterC(i) if isinstance(i, dict) else i for i in v]
             setattr(self, k, v)
 
-objectID = formatter(json.load(open(Path(".")/"resources"/"json"/"id.json", "r")))
+objectID = GJFormatterC(json.load(open(Path(".")/"resources"/"json"/"id.json", "r")))
 
-LocalLevels = []
+LocalLevels: list[GeometryDashLevel] = []
+GJLocalLevelTitleS: list[str] = []
+GJLocalLevelTitleLWS: list[str] = []
 
-class __getLevels:
+class __GJgetLevelsC:
     def __init__(self):
         pass
-    def find(self, title) -> GeometryDashLevel:
-        return [l for l in LocalLevels if l.title == title][0]
-    def findall(self, title) -> list:
-        return [l for l in LocalLevels if l.title == title]
+    def find(self, title: str, caseSensitive=True) -> GeometryDashLevel:
+        return [l for l in LocalLevels if (l.title.lower() if not caseSensitive else l.title) == title][0] if title in (GJLocalLevelTitleLWS if not caseSensitive else GJLocalLevelTitleS) else print(f"[LOG] Level '{title}' not found.")
+
+    def findall(self, title: str, caseSensitive=True) -> list[GeometryDashLevel]:
+        return [l for l in LocalLevels if (l.title.lower() if not caseSensitive else l.title) == title] if title in (GJLocalLevelTitleLWS if not caseSensitive else GJLocalLevelTitleS) else print(f"[LOG] No instances of level '{title}' found.")
     
-class __getXML:
+class __GJgetXMLC:
     def __init__(self):
         self.decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
         self.xml = parse_xml(self.decoded)
     def prettifyXML(self):
         return minidom.parseString(ET.tostring(self.xml)).toprettyxml(indent="\t", encoding='utf-8').decode('utf-8')
     
-def getLevels(): return __getLevels()
-def getXML(): return __getXML()
+def getLevels(): return __GJgetLevelsC()
+def getXML(): return __GJgetXMLC()
 
-def get_levels():
+def GJgetLevelDataF():
     decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
     xml_code = parse_xml(decoded)
-    level_title = []
+    level_title: list[str] = []
     level_author = []
     level_data = []
     level_description = []
@@ -726,7 +801,9 @@ def get_levels():
         revision = level_revision[i]
         data = level_data[i]
         LocalLevels.append(GeometryDashLevel(title, author, desc, base64.urlsafe_b64encode(gz.compress(data.encode('utf-8'))).decode('utf-8'), revision=revision))
-get_levels()
+        GJLocalLevelTitleS.append(title)
+        GJLocalLevelTitleLWS.append(title.lower())
+GJgetLevelDataF()
 
 def main():
     print("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-")
