@@ -26,3 +26,6 @@ GD.add_level(myLevel)
 > **GDLevelsLib** is still in alpha, so this may change!
 >
 > I will make sure to update the example project.
+
+## Requirements
+> Python 3.10
