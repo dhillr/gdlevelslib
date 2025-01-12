@@ -34,7 +34,7 @@ def add_pixel(level: gdlevel, x, y, o):
 
 for j in range(13):
     for i in range(24):
-        add_pixel(level, i, j, i+j*48)
+        add_pixel(level, (i-11)/24, (j-11)/13, i+j*48)
 
 GD.add_level(level)
 

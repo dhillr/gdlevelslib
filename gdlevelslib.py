@@ -468,7 +468,7 @@ class GeometryDashLevel:
         """
         Remove an object from the level.
         """
-        self.objects = self.objects.replace(obj.generate_string(), "")
+        self.objects = self.objects.replace(obj.generate_string(), "", 1)
     
     def add_objects(self, objects: list[GeometryDashObject]) -> None:
         """
