@@ -498,6 +498,22 @@ class GeometryDashLevel:
                 return obj
             if group and str(group) in obj.groups:
                 return obj
+            
+    def objfindindex(self, ID: int=None, group: list=None) -> int:
+        """
+        Find an object's index with a specific property.
+
+        ### Parameters:
+            ID (int): The object ID.
+            group (int): The object group.
+        
+        """
+        objs = self.getObjects() if self.data else decode_level_string(self.objects)
+        for i in range(len(objs)):
+            if ID and int(objs[i].objectID) == ID:
+                return i
+            if group and str(group) in objs[i].groups:
+                return i
     
     def objfindall(self, ID: int=None, group: list=None) -> list[GeometryDashObject]:
         """
