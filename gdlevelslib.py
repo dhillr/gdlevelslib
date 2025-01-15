@@ -28,8 +28,8 @@ class OfficialSong:
     This is a class for official songs.
 
     ### Functions:
-        getSongByID(ID: int): Get a song by its ID.
-        getSongByName(name: str): Get a song by its name.
+        `getSongByID(ID: int)` Get a song by its ID.
+        `getSongByName(name: str)` Get a song by its name.
     """
     def __init__(self, ID=None):
         self.ID = ID if ID else None
@@ -98,7 +98,8 @@ class CustomSong:
     This is a class for custom songs.
 
     ### Functions:
-        getSongByID(ID: int): Get a custom song by its ID.
+        `getSongByID(ID: int)` Get a custom song by its ID.
+
     """
     def __init__(self, ID=None):
         self.ID = ID if ID else None
@@ -117,8 +118,8 @@ class Color:
     This is a class for colors.
 
     ### Parameters:
-        r (int): The red value.
-        g (int): The green value.
+        r (int) The red value.
+        g (int) The green value.
         b (int): The blue value.
     """
     def __init__(self, r, g, b):
@@ -483,7 +484,7 @@ class GeometryDashLevel:
         """
         return decode_level_string(gz.decompress(base64.urlsafe_b64decode(self.data.removesuffix("=").join("=="))).decode('utf-8'))
     
-    def objfind(self, ID: int=None, group: list=None) -> GeometryDashObject:
+    def objfind(self, ID: int=None, group: list=None, OPTIMIZE: bool=None) -> GeometryDashObject:
         """
         Find an object with a specific property.
 
@@ -492,28 +493,20 @@ class GeometryDashLevel:
             group (int): The object group.
         
         """
-        objs = self.getObjects() if self.data else decode_level_string(self.objects)
-        for obj in objs:
-            if ID and int(obj.objectID) == ID:
-                return obj
-            if group and str(group) in obj.groups:
-                return obj
-            
-    def objfindindex(self, ID: int=None, group: list=None) -> int:
-        """
-        Find an object's index with a specific property.
-
-        ### Parameters:
-            ID (int): The object ID.
-            group (int): The object group.
-        
-        """
-        objs = self.getObjects() if self.data else decode_level_string(self.objects)
-        for i in range(len(objs)):
-            if ID and int(objs[i].objectID) == ID:
-                return i
-            if group and str(group) in objs[i].groups:
-                return i
+        objs = self.getObjects() if self.data else (decode_level_string(self.objects) if not OPTIMIZE else decode_level_string(self.objects, method='l'))
+        if OPTIMIZE:
+            print(objs[1][group])
+            if ID and ID in objs[0]:
+                return objs[0][ID]
+            if group and group in objs[1][group]:
+                print(objs[1])
+                return objs[1][group]
+        else:
+            for obj in objs:
+                if ID and int(obj.objectID) == ID:
+                    return obj
+                if group and str(group) in obj.groups:
+                    return obj
     
     def objfindall(self, ID: int=None, group: list=None) -> list[GeometryDashObject]:
         """
@@ -701,9 +694,11 @@ def add_level(level: GeometryDashLevel):
         print(f"[LOG] ERROR: Failed to encrypt XML code.")
         return False
 
-def decode_level_string(data: str) -> list[GeometryDashObject]:
+def decode_level_string(data: str, method: str=None) -> list[GeometryDashObject]:
     level_objects = []
     level_objects_str = data.split(";")
+    idL = []
+    groupL = []
 
     for l in level_objects_str:
         obj = l.split(",")
@@ -800,6 +795,8 @@ def decode_level_string(data: str) -> list[GeometryDashObject]:
                     other.append([obj[(2*i+1)-1], obj[2*i+1]])
         
         if (len(obj) > 3):
+            idL.append(obj[1])
+            groupL.append(groups)
             level_objects.append(GeometryDashObject(
                 x, y, obj[5], dir, 
                     flipX=flipX,
@@ -829,7 +826,10 @@ def decode_level_string(data: str) -> list[GeometryDashObject]:
                     groups=groups,
                     lockPlayerX=lockPlayerX,
             other=other))
-    return level_objects
+    if (method == 'l'):
+        return [idL, groupL]
+    else:
+        return level_objects
 
 class GJFormatterC:
     def __init__(self, d):
