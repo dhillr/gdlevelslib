@@ -195,7 +195,8 @@ class GeometryDashObject:
                     coinID: int=None,
                     fadeIn: int=None,
                     groups: list=[],
-                    lockPlayerX: int=None
+                    lockPlayerX: int=None,
+                    GJVAL_REGION: int=None,
                 ):
         self.objectID = objectID
         self.x = int(x)
@@ -229,6 +230,8 @@ class GeometryDashObject:
         self.lockPlayerX = lockPlayerX if lockPlayerX else None
         self.other = other if other else None
         self.textValue = str(textValue) if textValue else None
+        
+        self.region = GJVAL_REGION if GJVAL_REGION else None
 
     def __str__(self):
         base_str = f"GeometryDashObject: objectID={self.objectID}, x={self.x}, y={self.y}, dir={self.dir}"
@@ -484,7 +487,7 @@ class GeometryDashLevel:
         """
         return decode_level_string(gz.decompress(base64.urlsafe_b64decode(self.data.removesuffix("=").join("=="))).decode('utf-8'))
     
-    def objfind(self, ID: int=None, group: list=None, OPTIMIZE: bool=None) -> GeometryDashObject:
+    def objfind(self, ID: int=None, group: list=None, region: int=None) -> GeometryDashObject:
         """
         Find an object with a specific property.
 
@@ -493,20 +496,13 @@ class GeometryDashLevel:
             group (int): The object group.
         
         """
-        objs = self.getObjects() if self.data else (decode_level_string(self.objects) if not OPTIMIZE else decode_level_string(self.objects, method='l'))
-        if OPTIMIZE:
-            print(objs[1][group])
-            if ID and ID in objs[0]:
-                return objs[0][ID]
-            if group and group in objs[1][group]:
-                print(objs[1])
-                return objs[1][group]
-        else:
-            for obj in objs:
-                if ID and int(obj.objectID) == ID:
-                    return obj
-                if group and str(group) in obj.groups:
-                    return obj
+        objs = self.getObjects() if self.data else (decode_level_string(self.objects) if not region else decode_level_string(self.objects, region=region))
+        
+        for obj in objs:
+            if ID and int(obj.objectID) == ID:
+                return obj
+            if group and str(group) in obj.groups:
+                return obj
     
     def objfindall(self, ID: int=None, group: list=None) -> list[GeometryDashObject]:
         """
@@ -694,13 +690,14 @@ def add_level(level: GeometryDashLevel):
         print(f"[LOG] ERROR: Failed to encrypt XML code.")
         return False
 
-def decode_level_string(data: str, method: str=None) -> list[GeometryDashObject]:
+def decode_level_string(data: str, region: int=None) -> list[GeometryDashObject]:
     level_objects = []
     level_objects_str = data.split(";")
-    idL = []
-    groupL = []
-
+    
+    c = 0
     for l in level_objects_str:
+        if (region): 
+            if (math.floor(c/16) != region): continue
         obj = l.split(",")
         if (len(obj) < 6):
             continue
@@ -794,9 +791,7 @@ def decode_level_string(data: str, method: str=None) -> list[GeometryDashObject]
                 else:
                     other.append([obj[(2*i+1)-1], obj[2*i+1]])
         
-        if (len(obj) > 3):
-            idL.append(obj[1])
-            groupL.append(groups)
+        if (len(obj) > 3):     
             level_objects.append(GeometryDashObject(
                 x, y, obj[5], dir, 
                     flipX=flipX,
@@ -825,11 +820,10 @@ def decode_level_string(data: str, method: str=None) -> list[GeometryDashObject]
                     fadeIn=fadeIn,
                     groups=groups,
                     lockPlayerX=lockPlayerX,
-            other=other))
-    if (method == 'l'):
-        return [idL, groupL]
-    else:
-        return level_objects
+            other=other, GJVAL_REGION=math.floor(c/16)))
+    c += 1
+    
+    return level_objects
 
 class GJFormatterC:
     def __init__(self, d):

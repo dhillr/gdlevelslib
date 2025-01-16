@@ -31,23 +31,23 @@ rd_objZ = level.objfind(group=9994)
 def add_pixel(level: gdlevel, x, y, o):
     level.add_objects(GD.getLevels().find("ref", caseSensitive=False).getObjects())
     if (o > 0):
-        rd_objX = level.objfind(group=9420+o, OPTIMIZE=True)
-        rd_objY = level.objfind(group=9421+o, OPTIMIZE=True)
-        rd_objZ = level.objfind(group=9422+o, OPTIMIZE=True)
-        print(rd_objX, rd_objY, rd_objZ)
+        rd_objX = level.objfind(group=9420+o, region=1)
+        rd_objY = level.objfind(group=9421+o, region=1)
+        rd_objZ = level.objfind(group=9422+o, region=1)
+        # print(rd_objX, rd_objY, rd_objZ)
     else:
-        rd_objX = level.objfind(group=9992, OPTIMIZE=True)
-        rd_objY = level.objfind(group=9993, OPTIMIZE=True)
-        rd_objZ = level.objfind(group=9994, OPTIMIZE=True)
-        print(rd_objX, rd_objY, rd_objZ)
+        rd_objX = level.objfind(group=9992, region=1)
+        rd_objY = level.objfind(group=9993, region=1)
+        rd_objZ = level.objfind(group=9994, region=1)
+        # print(rd_objX, rd_objY, rd_objZ)
     rd_objX.groups = [str(9420+o+1)]
     rd_objY.groups = [str(9421+o+1)]
     rd_objZ.groups = [str(9422+o+1)]
-    if str(9422+o) in rd_objZ.groups:
-        print("yes")
-        print(rd_objZ.groups)
-    else:
-        print("no")
+    # if str(9422+o) in rd_objZ.groups:
+    #     print("yes")
+    #     print(rd_objZ.groups)
+    # else:
+    #     print("no")
     rd_objX.setPropertyInLevel(479, floor(x*100), level)
     rd_objY.setPropertyInLevel(479, floor(y*100), level)
     rd_objZ.setPropertyInLevel(479, 100, level)
