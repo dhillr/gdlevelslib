@@ -31,14 +31,14 @@ rd_objZ = level.objfind(group=9994)
 def add_pixel(level: gdlevel, x, y, o):
     level.add_objects(GD.getLevels().find("ref", caseSensitive=False).getObjects())
     if (o > 0):
-        rd_objX = level.objfind(group=9420+o, region=1)
-        rd_objY = level.objfind(group=9421+o, region=1)
-        rd_objZ = level.objfind(group=9422+o, region=1)
+        rd_objX = level.objfind(group=9420+o)
+        rd_objY = level.objfind(group=9421+o)
+        rd_objZ = level.objfind(group=9422+o)
         # print(rd_objX, rd_objY, rd_objZ)
     else:
-        rd_objX = level.objfind(group=9992, region=1)
-        rd_objY = level.objfind(group=9993, region=1)
-        rd_objZ = level.objfind(group=9994, region=1)
+        rd_objX = level.objfind(group=9992)
+        rd_objY = level.objfind(group=9993)
+        rd_objZ = level.objfind(group=9994)
         # print(rd_objX, rd_objY, rd_objZ)
     rd_objX.groups = [str(9420+o+1)]
     rd_objY.groups = [str(9421+o+1)]

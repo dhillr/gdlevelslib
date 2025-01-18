@@ -533,6 +533,9 @@ def kbmb(size) -> str:
 def xor_bytes(byteData) -> bytes:
     return bytes(b ^ 11 for b in byteData)
 
+def blocks(x):
+    return x*30
+
 def encrypt(path, out_path):
     open(out_path, "w").close()
     try:
