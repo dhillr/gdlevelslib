@@ -23,6 +23,66 @@ if sys.platform == "darwin":
     print("GDLevelsLib is not supported on macOS.")
     raise SystemExit
 
+class LevelSaver:
+    def __init__(self, lvl=None):
+        self.level = lvl
+
+    def __xor__(self, bd):
+        return bytes(b ^ 17 for b in bd)
+
+    def save(self, path: str=None, name: str=None) -> None:
+        """
+        Save a level to a file.
+        """
+        n = name.removesuffix(".gdl")+".gdl" if name else "level.gdl"
+        p = path/n if path else Path(".")/"level.gdl"
+        with open(p, "w") as f:
+            f.write(self.__xor__(self.level.genstr().encode('utf-8')).decode('utf-8'))
+
+    @classmethod
+    def save_level(self, lvl, path: str=None, name: str=None) -> None:
+        """
+        Save a level to a file.
+        """
+        n = name.removesuffix(".gdl")+".gdl" if name else "level.gdl"
+        p = path/n if path else Path(".")/"level.gdl"
+        head = f"{lvl.title},{lvl.author},{lvl.description},"
+        head += f"kS38,{lvl.color_channels},kA13,{lvl.song_offset},kA15,{lvl.song_fadeIn},"
+        head += f"kA16,{lvl.song_fadeOut},kA14,{lvl.guidelines},kA6,{lvl.bg_texture},kA7,{lvl.ground_texture},"
+        head += f"kA17,{lvl.line},kA18,{lvl.font},kS39,0,kA2,{lvl.gamemode},kA3,{lvl.mini},kA8,{lvl.dual},kA4,{lvl.speed},"
+        head += f"kA9,0,kA10,{lvl.twoPlayerMode},kA11,{lvl.upsideDown};"
+        s = self.__xor__(self, head.encode("utf-8")).decode('utf-8') 
+        s += self.__xor__(self, lvl.genstr().encode('utf-8')).decode('utf-8')
+        with open(p, "w") as f:
+            f.write(s)
+
+    @classmethod
+    def fromfile(self, path: str):
+        """
+        Load a level from a file.
+        """
+        f = open(path, "r")
+        d = self.__xor__(self, f.read().encode('utf-8')).decode('utf-8')
+        e = d.split(";")
+        props = e[0].split(",")
+        lvl = GeometryDashLevel(props[0], props[1], props[2], e[1])
+        lvl.color_channels = props[4]
+        lvl.song_offset = props[6]
+        lvl.song_fadeIn = bool(int(props[8]))
+        lvl.song_fadeOut = bool(int(props[10]))
+        lvl.guidelines = props[12]
+        lvl.bg_texture = props[14]
+        lvl.ground_texture = props[16]
+        lvl.line = props[18]
+        lvl.font = props[20]
+        lvl.gamemode = props[22]
+        lvl.mini = bool(int(props[24]))
+        lvl.dual = bool(int(props[26]))
+        lvl.speed = props[28]
+        lvl.twoPlayerMode = bool(int(props[30]))
+        lvl.upsideDown = bool(int(props[32]))
+        return lvl
+
 class OfficialSong:
     """
     This is a class for official songs.
@@ -461,6 +521,10 @@ class GeometryDashLevel:
         if self.verified: base_str += f"<k>k14</k><t />"
         base_str += f"</d></root>"
         return base_str
+    
+    def genstr(self) -> str:
+        initial_lvlstring = f"kS38,{self.color_channels},kA13,{self.song_offset},kA15,{self.song_fadeIn},kA16,{self.song_fadeOut},kA14,{self.guidelines},kA6,{self.bg_texture},kA7,{self.ground_texture},kA17,{self.line},kA18,{self.font},kS39,0,kA2,{self.gamemode},kA3,{self.mini},kA8,{self.dual},kA4,{self.speed},kA9,0,kA10,{self.twoPlayerMode},kA11,{self.upsideDown};"
+        return base64.urlsafe_b64encode(gz.compress(initial_lvlstring.encode('utf-8') + self.objects.encode('utf-8'))).decode('utf-8')
 
     def add_object(self, obj: GeometryDashObject) -> None:
         """
@@ -522,7 +586,6 @@ class GeometryDashLevel:
                 found.append(obj)
 
         return found
-
 
 def kbmb(size) -> str:
     if size < 1048576:
