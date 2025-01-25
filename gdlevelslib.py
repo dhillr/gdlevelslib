@@ -822,10 +822,6 @@ def set_level(input: GeometryDashLevel, out: GeometryDashLevel):
     Set an existing level from your save to a new level.
 
     ##### [WARNING] DO NOT RUN. THIS FUNCTION IS NOT COMPLETE AND WILL CORRUPT YOUR SAVE.
-    ```python
-    import gdlevelslib
-    GD.add_level(GeometryDashLevel("Test", "Test", "Test", "Test"))
-    ```
     """
     decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
     xml_code = parse_xml(decoded)
