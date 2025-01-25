@@ -5,7 +5,7 @@
 
 A library for creating and editing Geometry Dash levels.
 
-- Over 1,000 lines $${\color{red}</>}$$
+- Over 1,000 lines $${\color{green}</>}$$
 - Simple and easy to use
 - Fun! 🎉
 
