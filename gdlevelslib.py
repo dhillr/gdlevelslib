@@ -1,6 +1,31 @@
 """
 ### GDLevelsLib
 A Python library for Geometry Dash levels.
+
+- #### Make and (coming soon) modify levels with code.
+- #### Fun way to teach Geometry Dash players how to code :)
+- #### Replaces the need to manually copy paste.
+- #### Easy to use and understand.
+- #### Open source and available on GitHub. (https://github.com/dhillr/gdlevelslib)
+- #### Over 1,000 lines of code and counting.
+
+### Example Usage:
+```python
+import gdlevelslib as GD
+
+# Create a new level
+myLevel = GD.GeometryDashLevel("Example", "Example Username", "example", None, revision=0)
+
+# Add 1'024 objects to the level
+for i in range(1024):
+    myLevel.add_object(GD.GeometryDashObject(1+i, i*30+15, 15, 0, None).snap_to_grid())
+
+# Add our level to Geometry Dash
+GD.add_level(myLevel)
+```
+
+## Todo:
+- Finish level editing function (set_level corrupts your save file as of now)
 """
 import gzip as gz
 import base64
@@ -586,6 +611,39 @@ class GeometryDashLevel:
                 found.append(obj)
 
         return found
+    
+    def findindex(self, xml: Optional[ET.Element]) -> None:
+        """
+        Find the index of the level in your save.
+        """
+        flag = False
+        matching = 0
+        for e in xml.find(".//dict").find(".//d"):
+            if flag:
+                fTitle = False
+                fData = False
+                for elem in e.iter():
+                    if fTitle:
+                        if elem.text == self.title:
+                            matching += 1
+                        fTitle = not fTitle
+                    if fData:
+                        if elem.text == base64.urlsafe_b64encode(gz.compress(self.data.encode('utf-8'))).decode('utf-8'):
+                            matching += 1
+                        fData = not fData
+                    
+                    if elem.text == "k2":
+                        fTitle = True
+                    if elem.text == "k4":
+                        fData = True
+                flag = not flag
+
+            if e.tag == "k":
+                if e.text.startswith("k_"):
+                    if matching > 0:
+                        return int(e.text.removeprefix("k_"))-1
+                    flag = True
+                    continue
 
 def kbmb(size) -> str:
     if size < 1048576:
@@ -741,6 +799,9 @@ def remove_tag(xml: ET.Element, tag: str) -> bool:
                 grandparent.insert(index + i, child)
 
 def add_level(level: GeometryDashLevel):
+    """
+    Add a level to Geometry Dash.
+    """
     decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
     xml_code = parse_xml(decoded)
 
@@ -755,6 +816,35 @@ def add_level(level: GeometryDashLevel):
     else:
         print(f"[LOG] ERROR: Failed to encrypt XML code.")
         return False
+    
+def set_level(input: GeometryDashLevel, out: GeometryDashLevel):
+    """
+    Set an existing level from your save to a new level.
+
+    ##### [WARNING] DO NOT RUN. THIS FUNCTION IS NOT COMPLETE AND WILL CORRUPT YOUR SAVE.
+    ```python
+    import gdlevelslib
+    GD.add_level(GeometryDashLevel("Test", "Test", "Test", "Test"))
+    ```
+    """
+    decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
+    xml_code = parse_xml(decoded)
+    index = input.findindex(xml_code)
+    editflag = False
+
+    for elem in xml_code.find(".//dict").find(".//d"):
+        if editflag:
+            elem.clear()
+            elem.extend(ET.fromstring(out.generate_string(xml_code)))
+            et = ET.ElementTree(xml_code)
+            et.write(Path(".")/"resources"/"xml"/"levels.xml", encoding='utf-8', xml_declaration=True)
+            encrypt(Path(".")/"resources"/"xml"/"levels.xml", os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
+            encrypt(Path(".")/"resources"/"xml"/"levels.xml", os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels2.dat"))
+            break
+
+        if elem.tag == "k" and elem.text == f"k_{index}":
+            editflag = True
+            continue
 
 def decode_level_string(data: str, region: int=None) -> list[GeometryDashObject]:
     level_objects = []
