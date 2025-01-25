@@ -5,10 +5,7 @@
 - `title:` The title of the level.
 - `author:` The author of the level.
 - `description:` The level description (this is actually not applied to the level as of now)
-- `data:` This is usually set to None unless it's auto-generated using 
-```python 
-gdlevelslib.getLevels().find("<your level name>")
-```
+- `data:` This is usually set to None unless it's auto-generated using `gdlevelslib.getLevels().find("<your level name>")`
 
 ## Optional Arguments
 - `revision:` The level revision.
