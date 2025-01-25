@@ -3,9 +3,11 @@
 
 # GDLevelsLib
 
-A library for editing Geometry Dash levels.
+A library for creating and editing Geometry Dash levels.
 
-You can't edit existing levels yet, but you can create them.
+- Over 1,000 lines $${\color{red}</>}$$
+- Simple and easy to use
+- Fun! 🎉
 
 ## Example usage:
 ```python

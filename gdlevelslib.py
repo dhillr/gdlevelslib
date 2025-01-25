@@ -2,7 +2,7 @@
 ### GDLevelsLib
 A Python library for Geometry Dash levels.
 
-- #### Make and (coming soon) modify levels with code.
+- #### Make and modify levels with code.
 - #### Fun way to teach Geometry Dash players how to code :)
 - #### Replaces the need to manually copy paste.
 - #### Easy to use and understand.
@@ -534,17 +534,21 @@ class GeometryDashLevel:
                         level_numbers.append(e.text.removeprefix("k_"))
         return int(level_numbers[len(level_numbers)-1])
     
-    def generate_string(self, xml) -> str:
+    def generate_string(self, xml, force_index=None, no_wrapper=None) -> str:
         initial_lvlstring = f"kS38,{self.color_channels},kA13,{self.song_offset},kA15,{self.song_fadeIn},kA16,{self.song_fadeOut},kA14,{self.guidelines},kA6,{self.bg_texture},kA7,{self.ground_texture},kA17,{self.line},kA18,{self.font},kS39,0,kA2,{self.gamemode},kA3,{self.mini},kA8,{self.dual},kA4,{self.speed},kA9,0,kA10,{self.twoPlayerMode},kA11,{self.upsideDown};"
 
         if (not self.data): self.data = base64.urlsafe_b64encode(gz.compress(initial_lvlstring.encode('utf-8') + self.objects.encode('utf-8'))).decode('utf-8')
-        key_prefix = f"k_{str(self.get_max_number(xml) + 1)}"
+        key_prefix = f"k_{str(self.get_max_number(xml) + 1) if force_index == None else force_index}"
         use_desc = False
-        base_str = f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k3</k><s>{base64.b64encode(self.description.encode('utf-8')).decode('utf-8')}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>" if use_desc else f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>"
+        if no_wrapper != None:
+            if no_wrapper:
+                base_str = f"<root><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k3</k><s>{base64.b64encode(self.description.encode('utf-8')).decode('utf-8')}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>" if use_desc else f"<root><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>"
+            else:
+                base_str = f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k3</k><s>{base64.b64encode(self.description.encode('utf-8')).decode('utf-8')}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>" if use_desc else f"<root><k>{key_prefix}</k><d><k>kCEK</k><i>4</i><k>k2</k><s>{self.title}</s><k>k4</k><s>{self.data}</s><k>k46</k><s>{self.revision}</s><k>k5</k><s>{self.author}</s><k>k13</k><t /><k>k21</k><i>2</i><k>k16</k><i>1</i><k>k80</k><i>0</i><k>k50</k><i>35</i><k>k47</k><t /><k>kI1</k><r>0</r><k>kI2</k><r>36</r><k>kI3</k><r>1</r>"
         if self.song and isinstance(self.song, OfficialSong): base_str += f"<k>k8</k><i>{self.song.ID}</i>" if isinstance(self.song, OfficialSong) else ""
         if self.song and isinstance(self.song, CustomSong): base_str += f"<k>k45</k><i>{self.song.ID}</i>" if isinstance(self.song, CustomSong) else ""
         if self.verified: base_str += f"<k>k14</k><t />"
-        base_str += f"</d></root>"
+        base_str += (f"</d></root>" if not no_wrapper else "</root>")
         return base_str
     
     def genstr(self) -> str:
@@ -820,8 +824,6 @@ def add_level(level: GeometryDashLevel):
 def set_level(input: GeometryDashLevel, out: GeometryDashLevel):
     """
     Set an existing level from your save to a new level.
-
-    ##### [WARNING] DO NOT RUN. THIS FUNCTION IS NOT COMPLETE AND WILL CORRUPT YOUR SAVE.
     """
     decoded = decrypt(os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
     xml_code = parse_xml(decoded)
@@ -831,8 +833,11 @@ def set_level(input: GeometryDashLevel, out: GeometryDashLevel):
     for elem in xml_code.find(".//dict").find(".//d"):
         if editflag:
             elem.clear()
-            elem.extend(ET.fromstring(out.generate_string(xml_code)))
+            lvldata = out.generate_string(xml_code, force_index=index, no_wrapper=True)
+            elem.extend(ET.fromstring(lvldata))
             et = ET.ElementTree(xml_code)
+            for e in elem.iter():
+                print(e.tag, e.text)
             et.write(Path(".")/"resources"/"xml"/"levels.xml", encoding='utf-8', xml_declaration=True)
             encrypt(Path(".")/"resources"/"xml"/"levels.xml", os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels.dat"))
             encrypt(Path(".")/"resources"/"xml"/"levels.xml", os.path.expandvars(r"%localappdata%\GeometryDash\CCLocalLevels2.dat"))
