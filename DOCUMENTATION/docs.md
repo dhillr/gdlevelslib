@@ -1,4 +1,4 @@
-# GDLevelsLib Documenntation
+# GDLevelsLib Documentation **WIP**
 
 ## Classes
 [gdlevelslib.GeometryDashLevel](classes/GeometryDashLevel.md)
