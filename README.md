@@ -1,5 +1,5 @@
 > [!NOTE]
-> **GDLevelsLib** is now in alpha! Testers would be greatly appreciated.
+> **GDLevelsLib** is now in **beta!** Testers would be greatly appreciated.
 
 # GDLevelsLib
 
@@ -31,4 +31,5 @@ GD.add_level(myLevel)
 
 ## Requirements
 > Python 3.10
+> Basic knowledge in programming :P
 
