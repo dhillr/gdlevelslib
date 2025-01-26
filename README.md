@@ -6,7 +6,7 @@
 A library for creating and editing Geometry Dash levels.
 
 - Over 1,000 lines `</>`
-- Simple and easy to use
+- Simple and easy to use 👍
 - Fun! 🎉
 
 ## Example usage:

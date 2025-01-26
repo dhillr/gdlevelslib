@@ -9,7 +9,7 @@ A Python library for Geometry Dash levels.
 - #### Open source and available on GitHub. (https://github.com/dhillr/gdlevelslib)
 - #### Over 1,000 lines of code and counting.
 
-### Example Usage:
+### Example Program:
 ```python
 import gdlevelslib as GD
 
