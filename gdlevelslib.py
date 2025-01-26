@@ -34,6 +34,7 @@ import os
 import sys
 import math
 import json
+import webbrowser
 from typing import Optional
 from xml.dom import minidom
 from pathlib import Path
@@ -847,7 +848,17 @@ def set_level(input: GeometryDashLevel, out: GeometryDashLevel):
             editflag = True
             continue
 
-def decode_level_string(data: str, region: int=None) -> list[GeometryDashObject]:
+def preview_level(level: GeometryDashLevel):
+    """
+    Create a live preview of the level (WIP)
+    """
+    objs = decode_level_string(gz.decompress(base64.urlsafe_b64decode(level.genstr())).decode('utf-8'), asObject=True)
+    json.dump(objs, open(Path(".")/"lib"/"live_preview"/"assets"/"level"/"level.json", "w"), indent=4)
+
+    os.startfile(Path(".")/"lib"/"live_preview"/"start.bat") # start the server
+    webbrowser.open("http://localhost:8000/lib/live_preview/index.html") # open the preview
+
+def decode_level_string(data: str, region: int=None, asObject: bool=None) -> list[GeometryDashObject]:
     level_objects = []
     level_objects_str = data.split(";")
     
@@ -949,35 +960,44 @@ def decode_level_string(data: str, region: int=None) -> list[GeometryDashObject]
                     other.append([obj[(2*i+1)-1], obj[2*i+1]])
         
         if (len(obj) > 3):     
-            level_objects.append(GeometryDashObject(
-                x, y, obj[5], dir, 
-                    flipX=flipX,
-                    flipY=flipY,
-                    yellowLayer=yellowLayer,
-                    baseHSV=baseHSV,
-                    detailHSV=detailHSV,
-                    copyColorID=copyColorID,
-                    zLayer=zLayer,
-                    scale=scale,
-                    groupParent=groupParent,
-                    editorLayer1=editorLayer1,
-                    editorLayer2=editorLayer2,
-                    copyOpacity=copyOpacity,
-                    colBlending=colBlending,
-                    targetGroup=targetGroup,
-                    extra=extra,
-                    baseHSVEnabled=baseHSVEnabled,
-                    detailHSVEnabled=detailHSVEnabled,
-                    editorLayer3=editorLayer3,
-                    base=base,
-                    detail=detail,
-                    textValue=textValue,
-                    touchTriggered=touchTriggered,
-                    coinID=coinID,
-                    fadeIn=fadeIn,
-                    groups=groups,
-                    lockPlayerX=lockPlayerX,
-            other=other, GJVAL_REGION=math.floor(c/16)))
+            if asObject != None:
+                if asObject:
+                    level_objects.append({
+                        "id": int(x),
+                        "x": int(y),
+                        "y": int(obj[5]),
+                        "dir": float(dir)
+                    })
+            else:
+                level_objects.append(GeometryDashObject(
+                    x, y, obj[5], dir, 
+                        flipX=flipX,
+                        flipY=flipY,
+                        yellowLayer=yellowLayer,
+                        baseHSV=baseHSV,
+                        detailHSV=detailHSV,
+                        copyColorID=copyColorID,
+                        zLayer=zLayer,
+                        scale=scale,
+                        groupParent=groupParent,
+                        editorLayer1=editorLayer1,
+                        editorLayer2=editorLayer2,
+                        copyOpacity=copyOpacity,
+                        colBlending=colBlending,
+                        targetGroup=targetGroup,
+                        extra=extra,
+                        baseHSVEnabled=baseHSVEnabled,
+                        detailHSVEnabled=detailHSVEnabled,
+                        editorLayer3=editorLayer3,
+                        base=base,
+                        detail=detail,
+                        textValue=textValue,
+                        touchTriggered=touchTriggered,
+                        coinID=coinID,
+                        fadeIn=fadeIn,
+                        groups=groups,
+                        lockPlayerX=lockPlayerX,
+                other=other, GJVAL_REGION=math.floor(c/16)))
     c += 1
     
     return level_objects
