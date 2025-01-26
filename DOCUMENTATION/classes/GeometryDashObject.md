@@ -12,7 +12,7 @@ I know it isn't efficient like this, but I just love OOP too mmuch :P
 ## Optional Arguments
 ![NOTE]
 > Most of these object properties are incorrect as of now (I got them from AI because I couldn't find a good source),
-
+>
 > so it's not the best idea to use them right now.
 - `flipX:` The object's flipX property. (0 or 1)
 - `flipY:` The object's flipY property. (0 or 1)
