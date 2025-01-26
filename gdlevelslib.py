@@ -25,7 +25,7 @@ GD.add_level(myLevel)
 ```
 
 ## Todo:
-- Finish level editing function (set_level corrupts your save file as of now)
+- Add description support.
 """
 import gzip as gz
 import base64
@@ -649,7 +649,7 @@ class GeometryDashLevel:
                         return int(e.text.removeprefix("k_"))-1
                     flag = True
                     continue
-
+        
 def kbmb(size) -> str:
     if size < 1048576:
         return str(0.01*round(100*(size/1024))) + " KB"
@@ -848,7 +848,8 @@ def set_level(input: GeometryDashLevel, out: GeometryDashLevel):
             editflag = True
             continue
 
-def preview_level(level: GeometryDashLevel):
+GJPreviewPathS = ""
+def preview_level(level: GeometryDashLevel, path):
     """
     Create a live preview of the level (WIP)
     """
@@ -856,6 +857,7 @@ def preview_level(level: GeometryDashLevel):
     json.dump(objs, open(Path(".")/"lib"/"live_preview"/"assets"/"level"/"level.json", "w"), indent=4)
 
     os.startfile(Path(".")/"lib"/"live_preview"/"start.bat") # start the server
+    os.startfile(Path(".")/"lib"/"live_preview"/"eventhandler"/"LivePreviewEventHandler.py") # open the preview
     webbrowser.open("http://localhost:8000/lib/live_preview/index.html") # open the preview
 
 def decode_level_string(data: str, region: int=None, asObject: bool=None) -> list[GeometryDashObject]:

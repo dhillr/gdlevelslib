@@ -32,5 +32,7 @@ GD.add_level(myLevel)
 ## Requirements
 > Python 3.10
 >
+> If you want the live preview feature to work, install **watchdog** using `pip install watchdog`
+>
 > Basic knowledge in programming :P
 
