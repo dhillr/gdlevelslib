@@ -2,7 +2,7 @@ import subprocess
 from time import sleep
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from gdlevelslib import GJPreviewPathS
+from pathlib import Path
 
 class LivePreviewEventHandler(FileSystemEventHandler):
     def on_modified(self, event):
@@ -12,7 +12,8 @@ class LivePreviewEventHandler(FileSystemEventHandler):
 if __name__ == "__main__":
     event_handler = LivePreviewEventHandler()
     observer = Observer()
-    observer.schedule(event_handler, path=GJPreviewPathS, recursive=True)
+    p = open(Path.cwd()/"lib"/"live_preview"/"eventhandler"/"path.txt", "r").read()
+    observer.schedule(event_handler, path=p, recursive=True)
     observer.start()
 
     print("[LOG] Server started! (http://localhost:8000/lib/live_preview/index.html)")
