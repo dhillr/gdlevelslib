@@ -4,10 +4,10 @@
 I know it isn't efficient like this, but I just love OOP too mmuch :P
 
 ## Required Arguments
-`id:` The object ID. Don't worry, some of these are already covered in `GD.objectID` with names of about 150 objects.
-`x:` X position
-`y:` Y position
-`dir:` Rotation (Note that this is not in radians)
+- `id:` The object ID. Don't worry, some of these are already covered in `GD.objectID` with names of about 150 objects.
+- `x:` X position
+- `y:` Y position
+- `dir:` Rotation (Note that this is not in radians)
 
 ## Optional Arguments
 ![NOTE]
