@@ -862,10 +862,9 @@ def preview_level(level: GeometryDashLevel, path: Path):
     objs = decode_level_string(gz.decompress(base64.urlsafe_b64decode(level.genstr())).decode('utf-8'), asObject=True)
     json.dump(objs, open(Path(".")/"lib"/"live_preview"/"assets"/"level"/"level.json", "w"), indent=4)
     # open(Path(".")/"lib"/"live_preview"/"eventhandler"/"path.txt", "w").write(str(path.parent))
-    open(Path(".")/"lib"/"live_preview"/"eventhandler"/"path.txt", "w").write("e")
 
     os.startfile(Path(".")/"lib"/"live_preview"/"start.bat") # start the server
-    os.startfile(Path(".")/"lib"/"live_preview"/"eventhandler"/"LivePreviewEventHandler.py") # open the preview
+    # os.startfile(Path(".")/"lib"/"live_preview"/"eventhandler"/"LivePreviewEventHandler.py") # open the preview
     webbrowser.open("http://localhost:8000/lib/live_preview/index.html") # open the preview
 
 def decode_level_string(data: str, region: int=None, asObject: bool=None) -> list[GeometryDashObject]:
