@@ -42,7 +42,7 @@ I know it isn't efficient like this, but I just love OOP too mmuch :P
 - `lockPlayerX:` The object's lock player X property. (0 or 1?)
 
 ## `other`
-This is a list of lists (I know I could use tuples but I'mm lazy and kinda beginner)
+This is a list of lists (I know I could use tuples but I'm lazy and kinda new to coding [4 years])
 ```python
 myObject = GeometryDashObject(2925, 15, 15, 0, other=[['111', '1']])
 ```
