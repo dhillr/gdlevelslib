@@ -49,6 +49,60 @@ if sys.platform == "darwin":
     print("GDLevelsLib is not supported on macOS.")
     raise SystemExit
 
+class logic:
+    """
+    PRE-ALPHA (NOT IN WORKING STATE)
+
+    ## Logic
+    This is a class for turning code into Geometry Dash levels.
+    """
+    def __init__(self, endFrame=0):
+        self.ctx = None
+        while True:
+            self.onUpdate()
+            self.loop(self.ctx)
+
+            if endFrame > 0:
+                if self.ctx.frame >= endFrame:
+                    break
+        print("Logic loop terminated. (logic)")
+    
+    class context:
+        """
+        ## logic.context
+        This is a class for the context of the logic class.
+
+        ### Parameters:
+        `level (GeometryDashLevel)` The level to add the objects to.
+        """
+        def __init__(self, level, GJVAL_FR=None, GJVAL_CTX=None):
+            if GJVAL_CTX == None:
+                raise SystemExit("Use newContext() to create contexts. (logic.context)")
+            self.level = level
+            self.frame = 0 if GJVAL_FR == None else GJVAL_FR
+
+        @staticmethod
+        def newContext():
+            return logic.context(GJVAL_CTX=1)
+        
+        def positionObject(self, obj, x: int, y: int) -> None:
+            """
+            Set the position of an object.
+            """
+            o = self.level.objfind(obj)
+            o.add_group(1)
+            self.level.add_object(GeometryDashObject(901, o.x, 315, 0, [['10', '0.5'], ['28', str(o.x-x)], ['29', str(o.y-y)], ['85', '1']]))
+
+    @staticmethod
+    def loop(ctx: context) -> None:
+        ctx.frame += 1
+
+    def onUpdate(self) -> None:
+        self.ctx = self.context.newContext()
+
+    def createContext() -> context:
+        return logic.context(GJVAL_CTX=1)
+
 class LevelSaver:
     def __init__(self, lvl=None):
         self.level = lvl
@@ -419,6 +473,16 @@ class GeometryDashObject:
         level.remove_object(self)
         self.setProperty(p, v)
         level.add_object(self)
+
+    def add_group(self, group: int) -> None:
+        """
+        Add the object to a group.
+
+        ### Parameters:
+            group (int): The group ID.
+        """
+        if group not in self.groups:
+            self.groups.append(group)
 
 class GeometryDashLevel:
     """
@@ -900,8 +964,8 @@ def decode_level_string(data: str, region: int=None, asObject: bool=None) -> lis
         extra = 0 # property 24
         baseHSVEnabled = 0 # property 25
         detailHSVEnabled = 0 # property 26
-        editorLayer3 = 0 # property 28
-        base = 0 # property 29
+        editorLayer3 = 0 # property 28 (target move x)
+        base = 0 # property 29 (target move y)
         detail = 0 # property 30
         textValue = 0 # property 31
         touchTriggered = 0 # property 32
@@ -910,6 +974,7 @@ def decode_level_string(data: str, region: int=None, asObject: bool=None) -> lis
         fadeIn = 0 # property 36
         # property 51 is also target group??!?!
         groups = [] # property 57
+        # property 85 is move time
         lockPlayerX = 0 # property 155
         other = []
 
