@@ -40,68 +40,15 @@ from xml.dom import minidom
 from pathlib import Path
 
 print("##########")
-print("## #### ##  GDLevelsLib [ALPHA]")
+print("## #### ##  GDLevelsLib [BETA]")
 print("##########  by poyo52596kirby")
-print("#        #  Version 1.0.4a")
+print("#        #  Version 1.0.0b")
 print("##########\n")
 
 if sys.platform == "darwin":
     print("GDLevelsLib is not supported on macOS.")
     raise SystemExit
 
-class logic:
-    """
-    PRE-ALPHA (NOT IN WORKING STATE)
-
-    ## Logic
-    This is a class for turning code into Geometry Dash levels.
-    """
-    def __init__(self, endFrame=0):
-        self.ctx = None
-        while True:
-            self.onUpdate()
-            self.loop(self.ctx)
-
-            if endFrame > 0:
-                if self.ctx.frame >= endFrame:
-                    break
-        print("Logic loop terminated. (logic)")
-    
-    class context:
-        """
-        ## logic.context
-        This is a class for the context of the logic class.
-
-        ### Parameters:
-        `level (GeometryDashLevel)` The level to add the objects to.
-        """
-        def __init__(self, level, GJVAL_FR=None, GJVAL_CTX=None):
-            if GJVAL_CTX == None:
-                raise SystemExit("Use newContext() to create contexts. (logic.context)")
-            self.level = level
-            self.frame = 0 if GJVAL_FR == None else GJVAL_FR
-
-        @staticmethod
-        def newContext():
-            return logic.context(GJVAL_CTX=1)
-        
-        def positionObject(self, obj, x: int, y: int) -> None:
-            """
-            Set the position of an object.
-            """
-            o = self.level.objfind(obj)
-            o.add_group(1)
-            self.level.add_object(GeometryDashObject(901, o.x, 315, 0, [['10', '0.5'], ['28', str(o.x-x)], ['29', str(o.y-y)], ['85', '1']]))
-
-    @staticmethod
-    def loop(ctx: context) -> None:
-        ctx.frame += 1
-
-    def onUpdate(self) -> None:
-        self.ctx = self.context.newContext()
-
-    def createContext() -> context:
-        return logic.context(GJVAL_CTX=1)
 
 class LevelSaver:
     def __init__(self, lvl=None):
@@ -648,13 +595,14 @@ class GeometryDashLevel:
         """
         return decode_level_string(gz.decompress(base64.urlsafe_b64decode(self.data.removesuffix("=").join("=="))).decode('utf-8'))
     
-    def objfind(self, ID: int=None, group: list=None, region: int=None) -> GeometryDashObject:
+    def objfind(self, ID: int=None, group: list=None, levelObject: GeometryDashObject=None, region: int=None) -> GeometryDashObject:
         """
         Find an object with a specific property.
 
-        ### Parameters:
+        ### Parameters (Positional):
             ID (int): The object ID.
             group (int): The object group.
+            levelObject (GeometryDashObject): The object to find.
         
         """
         objs = self.getObjects() if self.data else (decode_level_string(self.objects) if not region else decode_level_string(self.objects, region=region))
@@ -663,6 +611,8 @@ class GeometryDashLevel:
             if ID and int(obj.objectID) == ID:
                 return obj
             if group and str(group) in obj.groups:
+                return obj
+            if levelObject and obj == levelObject:
                 return obj
     
     def objfindall(self, ID: int=None, group: list=None) -> list[GeometryDashObject]:
@@ -716,6 +666,85 @@ class GeometryDashLevel:
                         return int(e.text.removeprefix("k_"))-1
                     flag = True
                     continue
+
+class logic:
+    """
+    PRE-ALPHA (NOT IN WORKING STATE)
+
+    ## Logic
+    This is a class for turning code into Geometry Dash levels.
+    """
+    def __init__(self, endFrame=0):
+        self.endFrame = endFrame
+        self.ctx: logic.context = None
+        self.preload()
+        self.onStart()
+        print("[LOG] Logic loop running. (logic)")
+        while True:
+            print(f"[LOG] Frame {self.ctx.frame}")
+            self.onUpdate()
+            self.loop(self.ctx)
+
+            if self.endFrame > 0:
+                if self.ctx.frame >= self.endFrame:
+                    self.onEnd()
+                    break
+        print("[LOG] Logic loop terminated. (logic)")
+    
+    class context:
+        """
+        ## logic.context
+        This is a class for the context of the logic class.
+
+        ### Parameters:
+        `level (GeometryDashLevel)` The level to add the objects to.
+        """
+        def __init__(self, level: GeometryDashLevel, GJVAL_FR=None, GJVAL_CTX=None):
+            if GJVAL_CTX == None:
+                raise SystemExit("[LOG] ERROR: Use newContext() to create contexts. (logic.context)")
+            self.level = level
+            self.frame = 0 if GJVAL_FR == None else GJVAL_FR
+            self.GR = 1
+
+        @staticmethod
+        def newContext(level):
+            return logic.context(level=level, GJVAL_CTX=1)
+        
+        def positionObject(self, lvlobj: GeometryDashObject, x: int, y: int) -> None:
+            """
+            Set the position of an object.
+            """
+
+            # find the object and add it to a group
+
+            o = self.level.objfind(ID=lvlobj.objectID)
+            o.add_group(self.GR)
+
+            # add a move trigger
+            self.level.add_object(GeometryDashObject(901, self.frame, 315, 0, [['10', '0.5'], ['28', str(o.x-x)], ['29', str(o.y-y)], ['85', str(self.GR)]]))
+
+            # increment group
+            self.GR += 1
+
+    @staticmethod
+    def loop(ctx: context) -> None:
+        ctx.frame += 1
+
+    def preload(self) -> None:
+        pass
+
+    def onUpdate(self) -> None:
+        pass
+
+    def onStart(self) -> None:
+        pass
+
+    def onEnd(self) -> None:
+        pass
+    
+    @staticmethod
+    def createContext() -> context:
+        return logic.context(GJVAL_CTX=1)
         
 def kbmb(size) -> str:
     if size < 1048576:
@@ -726,7 +755,7 @@ def kbmb(size) -> str:
 def xor_bytes(byteData) -> bytes:
     return bytes(b ^ 11 for b in byteData)
 
-def blocks(x):
+def blocks(x) -> int:
     return x*30
 
 def encrypt(path, out_path):
