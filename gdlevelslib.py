@@ -681,7 +681,8 @@ class logic:
         self.onStart()
         print("[LOG] Logic loop running. (logic)")
         while True:
-            print(f"[LOG] Frame {self.ctx.frame}")
+            spinnythingy = "/-\|"[(self.ctx.frame//70)%4]
+            print(f"[LOG] LOGIC! Frame {self.ctx.frame} {spinnythingy}")
             self.onUpdate()
             self.loop(self.ctx)
 
@@ -705,9 +706,16 @@ class logic:
             self.level = level
             self.frame = 0 if GJVAL_FR == None else GJVAL_FR
             self.GR = 1
+            self.GJVAL_PREVOBJ: GeometryDashObject = None
 
         @staticmethod
         def newContext(level):
+            """
+            Create a new context.
+
+            ### Parameters:
+            `level (GeometryDashLevel)` The level to assign the context to.
+            """
             return logic.context(level=level, GJVAL_CTX=1)
         
         def positionObject(self, lvlobj: GeometryDashObject, x: int, y: int) -> None:
@@ -716,15 +724,22 @@ class logic:
             """
 
             # find the object and add it to a group
-
             o = self.level.objfind(ID=lvlobj.objectID)
-            o.add_group(self.GR)
+            o2 = GeometryDashObject(o.objectID, o.x, o.y, o.dir, other=o.other, groups=o.groups)
+            o2.add_group(self.GR)
+            self.level.remove_object(o)
+            self.level.add_object(o2)
+            # print(o.generate_string())
 
             # add a move trigger
-            self.level.add_object(GeometryDashObject(901, self.frame, 315, 0, [['10', '0.5'], ['28', str(o.x-x)], ['29', str(o.y-y)], ['85', str(self.GR)]]))
+            self.level.add_object(GeometryDashObject(901, self.frame*30, 315, 0, [['10', '0.5'], ['28', str(x-o.x)], ['29', str(x-o.y)], ['51', str(self.GR)]]))
 
-            # increment group
-            self.GR += 1
+            # if it's the same object, don't increment the group
+            if self.GJVAL_PREVOBJ:
+                if self.GJVAL_PREVOBJ.objectID != o.objectID:
+                    self.GR += 1
+            
+            self.GJVAL_PREVOBJ = o
 
     @staticmethod
     def loop(ctx: context) -> None:
