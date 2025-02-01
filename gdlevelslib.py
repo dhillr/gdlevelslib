@@ -603,7 +603,6 @@ class GeometryDashLevel:
             ID (int): The object ID.
             group (int): The object group.
             levelObject (GeometryDashObject): The object to find.
-        
         """
         objs = self.getObjects() if self.data else (decode_level_string(self.objects) if not region else decode_level_string(self.objects, region=region))
         
@@ -619,10 +618,9 @@ class GeometryDashLevel:
         """
         Find all objects with a specific property.
 
-        ### Parameters:
+        ### Parameters (Positional):
             ID (int): The object ID.
             group (int): The object group.
-        
         """
         found = []
         objs = self.getObjects() if self.data else decode_level_string(self.objects)
@@ -703,6 +701,7 @@ class logic:
         def __init__(self, level: GeometryDashLevel, GJVAL_FR=None, GJVAL_CTX=None):
             if GJVAL_CTX == None:
                 raise SystemExit("[LOG] ERROR: Use newContext() to create contexts. (logic.context)")
+
             self.level = level
             self.frame = 0 if GJVAL_FR == None else GJVAL_FR
             self.GR = 1
@@ -732,7 +731,17 @@ class logic:
             # print(o.generate_string())
 
             # add a move trigger
-            self.level.add_object(GeometryDashObject(901, self.frame*30, 315, 0, [['10', '0.5'], ['28', str(x-o.x)], ['29', str(x-o.y)], ['51', str(self.GR)]]))
+            moveTrigger = GeometryDashObject(901, self.frame*30, 315, 0, 
+                                              [['10', '0.5'],
+                                              ['28', str(math.floor((x-o2.x)/3))],
+                                              ['29', str(math.floor((y-o2.y)/3))],
+                                              ['51', str(self.GR)]]
+                                            )
+            if self.GJVAL_PREVOBJ:
+                if self.GJVAL_PREVOBJ.objectID != o.objectID:
+                    self.level.add_object(moveTrigger)
+            else:
+                self.level.add_object(moveTrigger)
 
             # if it's the same object, don't increment the group
             if self.GJVAL_PREVOBJ:
