@@ -205,8 +205,8 @@ class Color:
     This is a class for colors.
 
     ### Parameters:
-        r (int) The red value.
-        g (int) The green value.
+        r (int): The red value.
+        g (int): The green value.
         b (int): The blue value.
     """
     def __init__(self, r, g, b):
@@ -481,7 +481,7 @@ class GeometryDashLevel:
                     twoPlayerMode: bool=None,
                     upsideDown: bool=None,
                     song=None, 
-                    bg_color: Color= None, 
+                    bg_color: Color=None, 
                     ground_color: Color=None,
                     verified: bool=None,
                 ):
@@ -511,7 +511,9 @@ class GeometryDashLevel:
                     self.gamemode = 6
                 case "swing":
                     self.gamemode = 7
-        self.color_channels = color_channels if color_channels else ""
+            
+        self.color_channels = color_channels if color_channels else []
+        self.c = ""
         self.song_offset = song_offset if song_offset else ""
         self.song_fadeIn = 1 if song_fadeIn else 0
         self.song_fadeOut = 1 if song_fadeOut else 0
@@ -525,9 +527,13 @@ class GeometryDashLevel:
         self.twoPlayerMode = 1 if twoPlayerMode else 0
         self.upsideDown = 1 if upsideDown else 0
         self.song = song if song else ""
-        if bg_color: self.color_channels += f"1_{bg_color.r}_2_{bg_color.g}_3_{bg_color.b}_11_255_12_255_13_255_4_-1_6_1000_7_1_15_1_18_0_8_1|"
-        if ground_color: self.color_channels += f"1_{ground_color.r}_2_{ground_color.g}_{ground_color.b}_0_11_255_12_255_13_255_4_-1_6_1001_7_1_15_1_18_0_8_1|"
+
+        # just so people don't get confused when the level has no "bg_color" or "ground_color" properties
+        self.bg_color = bg_color
+        self.ground_color = ground_color
+
         self.verified = 1 if verified else 0
+        self.GJVAL_UPLOADED = False
         self.data = data if data else ""
         self.objects = ""
 
@@ -547,7 +553,14 @@ class GeometryDashLevel:
         return int(level_numbers[len(level_numbers)-1])
     
     def generate_string(self, xml, force_index=None, no_wrapper=None) -> str:
-        initial_lvlstring = f"kS38,{self.color_channels},kA13,{self.song_offset},kA15,{self.song_fadeIn},kA16,{self.song_fadeOut},kA14,{self.guidelines},kA6,{self.bg_texture},kA7,{self.ground_texture},kA17,{self.line},kA18,{self.font},kS39,0,kA2,{self.gamemode},kA3,{self.mini},kA8,{self.dual},kA4,{self.speed},kA9,0,kA10,{self.twoPlayerMode},kA11,{self.upsideDown};"
+        if self.bg_color: self.c += f"1_{self.bg_color.r}_2_{self.bg_color.g}_3_{self.bg_color.b}_11_255_12_255_13_255_4_-1_6_1000_7_1_15_1_18_0_8_1|"
+        if self.ground_color: self.c += f"1_{self.ground_color.r}_2_{self.ground_color.g}_3_{self.ground_color.b}_11_255_12_255_13_255_4_-1_6_1001_7_1_15_1_18_0_8_1|"
+
+        for i in range(len(self.color_channels)):
+            c = self.color_channels[i]
+            self.c += f"1_{c.r}_2_{c.g}_3_{c.b}_11_255_12_255_13_255_4_-1_6_{i+1}_7_1_15_1_18_0_8_1|"
+        
+        initial_lvlstring = f"kS38,{self.c},kA13,{self.song_offset},kA15,{self.song_fadeIn},kA16,{self.song_fadeOut},kA14,{self.guidelines},kA6,{self.bg_texture},kA7,{self.ground_texture},kA17,{self.line},kA18,{self.font},kS39,0,kA2,{self.gamemode},kA3,{self.mini},kA8,{self.dual},kA4,{self.speed},kA9,0,kA10,{self.twoPlayerMode},kA11,{self.upsideDown};"
 
         if (not self.data): self.data = base64.urlsafe_b64encode(gz.compress(initial_lvlstring.encode('utf-8') + self.objects.encode('utf-8'))).decode('utf-8')
         key_prefix = f"k_{str(self.get_max_number(xml) + 1) if force_index == None else force_index}"
@@ -563,6 +576,7 @@ class GeometryDashLevel:
         if self.song and isinstance(self.song, OfficialSong): base_str += f"<k>k8</k><i>{self.song.ID}</i>" if isinstance(self.song, OfficialSong) else ""
         if self.song and isinstance(self.song, CustomSong): base_str += f"<k>k45</k><i>{self.song.ID}</i>" if isinstance(self.song, CustomSong) else ""
         if self.verified: base_str += f"<k>k14</k><t />"
+        if self.GJVAL_UPLOADED: base_str += f"<k>k15</k><t />"
         base_str += (f"</d></root>" if not no_wrapper else "</root>")
         return base_str
     
@@ -664,6 +678,16 @@ class GeometryDashLevel:
                         return int(e.text.removeprefix("k_"))-1
                     flag = True
                     continue
+    
+    def upload(self):
+        """
+        Upload the level to the Geometry Dash servers.
+        """
+        if not self.GJVAL_UPLOADED:
+            print("[LOG] Uploading level...")
+            self.GJVAL_UPLOADED = True
+        else:
+            print("[LOG] Level already uploaded.")
 
 class logic:
     """
@@ -696,7 +720,7 @@ class logic:
         This is a class for the context of the logic class.
 
         ### Parameters:
-        `level (GeometryDashLevel)` The level to add the objects to.
+        level (GeometryDashLevel): The level to add the objects to.
         """
         def __init__(self, level: GeometryDashLevel, GJVAL_FR=None, GJVAL_CTX=None):
             if GJVAL_CTX == None:
@@ -713,7 +737,7 @@ class logic:
             Create a new context.
 
             ### Parameters:
-            `level (GeometryDashLevel)` The level to assign the context to.
+            level (GeometryDashLevel): The level to assign the context to.
             """
             return logic.context(level=level, GJVAL_CTX=1)
         

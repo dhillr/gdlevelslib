@@ -42,7 +42,24 @@
         "block5_empty": 120,
         "block5_edge3": 121,
         "block5_edgeH": 122,
-        "breakable_block": 143
+        "breakable_block": 143,
+        "block6_edgeAll": 160,
+        "block6_edge": 161,
+        "block6_edge2": 162,
+        "block6_corner": 163,
+        "block6_empty": 164,
+        "block6_edge3": 165,
+        "block6_edgeH": 166,
+        "block6_corner2": 167,
+        "block7_edgeAll": 168,
+        "block8_edgeAll": 169,
+        "slab1_edgeAll": 170,
+        "slab1_edge": 171,
+        "slab1_edgeAll2": 172,
+        "block9_corner": 173,
+        "slab1_edge2": 174,
+        "block10_edgeAll": 175,
+        "slab1_small": 176
     },
 
     "spikes": {
@@ -104,7 +121,20 @@
         "diamond": 134,
         "gear2_big": 137,
         "gear2_medium": 138,
-        "gear2_small": 139
+        "gear2_small": 139,
+        "diamond2_big": 151,
+        "diamond2_medium": 152,
+        "diamond2_small": 153,
+        "spike_gear_big": 154,
+        "spike_gear_medium": 155,
+        "spike_gear_small": 156,
+        "water1": 157,
+        "water2": 158,
+        "water3": 159,
+        "gear3_big": 180,
+        "gear3_medium": 181,
+        "gear3_small": 182,
+        "gear3_tiny": 183
     },
     
     "triggers": {
@@ -170,6 +200,9 @@
         "memory_spike": 144,
         "memory_small_spike": 145,
         "memory_block": 146,
-        "memory_slab": 147
+        "memory_slab": 147,
+        "memory_spike2": 177,
+        "memory_flat_spike2": 178,
+        "memory_small_spike2": 179
     }
 }
