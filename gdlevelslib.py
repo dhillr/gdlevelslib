@@ -730,6 +730,8 @@ class logic:
             self.frame = 0 if GJVAL_FR == None else GJVAL_FR
             self.GR = 1
             self.GJVAL_PREVOBJ: GeometryDashObject = None
+            self.GJVAL_OPX = 0
+            self.GJVAL_OPY = 0
 
         @staticmethod
         def newContext(level):
@@ -753,19 +755,25 @@ class logic:
             self.level.remove_object(o)
             self.level.add_object(o2)
             # print(o.generate_string())
-
+            self.GJVAL_OPX = o2.x
+            self.GJVAL_OPY = o2.y
             # add a move trigger
-            moveTrigger = GeometryDashObject(901, self.frame*30, 315, 0, 
-                                              [['10', '0.5'],
-                                              ['28', str(math.floor((x-o2.x)/3))],
-                                              ['29', str(math.floor((y-o2.y)/3))],
+            moveTrigger = GeometryDashObject(901, self.frame, 315, 0, 
+                                              [['10', '0'],
+                                              ['28', str((x-o.x)//3)],
+                                              ['29', '0'],
                                               ['51', str(self.GR)]]
                                             )
-            if self.GJVAL_PREVOBJ:
-                if self.GJVAL_PREVOBJ.objectID != o.objectID:
-                    self.level.add_object(moveTrigger)
-            else:
+            
+            print(self.GJVAL_OPX, self.GJVAL_OPY, o2.x, o2.y)
+            if not self.GJVAL_OPX == o2.x and not self.GJVAL_OPY == o2.y:
                 self.level.add_object(moveTrigger)
+            else:    
+                if self.GJVAL_PREVOBJ:
+                    if self.GJVAL_PREVOBJ.objectID != o.objectID:
+                        self.level.add_object(moveTrigger)
+                else:
+                    self.level.add_object(moveTrigger)
 
             # if it's the same object, don't increment the group
             if self.GJVAL_PREVOBJ:
@@ -773,6 +781,8 @@ class logic:
                     self.GR += 1
             
             self.GJVAL_PREVOBJ = o
+            self.GJVAL_OPX = x
+            self.GJVAL_OPY = y
 
     @staticmethod
     def loop(ctx: context) -> None:
