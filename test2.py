@@ -11,4 +11,5 @@ level.speed = 4
 level.bg_color = Color(0, 0, 0)
 level.ground_color = Color(255, 255, 255)
 
-add_level(level)
+# add_level(level)
+print(base64.b64encode("scavenger hunt".encode('utf-8')).decode('utf-8'))

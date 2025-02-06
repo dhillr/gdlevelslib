@@ -431,6 +431,22 @@ class GeometryDashObject:
         if group not in self.groups:
             self.groups.append(group)
 
+    def remove_group(self, group: int) -> None:
+        """
+        Remove the object from a group.
+
+        ### Parameters:
+            group (int): The group ID.
+        """
+        if group in self.groups:
+            self.groups.remove(group)
+
+    def clear_groups(self) -> None:
+        """
+        Clear all groups from the object.
+        """
+        self.groups = []
+
 class GeometryDashLevel:
     """
     This is a class for Geometry Dash levels.
