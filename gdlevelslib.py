@@ -4,7 +4,7 @@ A Python library for Geometry Dash levels.
 
 - #### Make and modify levels with code.
 - #### Fun way to teach Geometry Dash players how to code :)
-- #### Replaces the need to manually copy paste.
+- #### Replaces the need to manually copy paste in levels.
 - #### Easy to use and understand.
 - #### Open source and available on GitHub. (https://github.com/dhillr/gdlevelslib)
 - #### Over 1,000 lines of code and counting.
@@ -35,14 +35,18 @@ import sys
 import math
 import json
 import webbrowser
+import requests
 from typing import Optional
 from xml.dom import minidom
 from pathlib import Path
+from urllib.request import urlopen, Request
+from urllib.error import *
+from __init__ import __version__
 
 print("##########")
 print("## #### ##  GDLevelsLib [BETA]")
 print("##########  by poyo52596kirby")
-print("#        #  Version 1.0.0b")
+print("#        #  Version " + __version__)
 print("##########\n")
 
 if sys.platform == "darwin":
@@ -705,6 +709,64 @@ class GeometryDashLevel:
         else:
             print("[LOG] Level already uploaded.")
 
+class fetch:
+    """
+    ## fetch
+    This is a class for getting data from the Geometry Dash servers.
+    """
+    def __init__(self):
+        pass
+    
+    @staticmethod
+    def get(ID: int) -> str:
+        # test
+        # playername = "robtop"
+
+        # url = "http://www.boomlings.com/database/getGJUsers20.php"
+        # params = "gameVersion=21&binaryVersion=35&gdw=0&str="+playername+"&total=0&page=0&secret=Wmfd2893gb7"
+        
+        # try:
+        #     fetched = urlopen(url, params.encode('utf-8')).read().decode('utf-8')
+        # except HTTPError as e:
+        #     print(f"[LOG] HTTPError: {e.code} - {e.reason}")
+        #     return
+        # except URLError as e:  
+        #     print(f"[LOG] URLError: {e.reason}")
+        #     return
+        # except Exception as e:
+        #     print(f"[LOG] Exception: {e}")
+        #     return
+
+        # return fetched
+
+        url = "http://www.boomlings.com/database/downloadGJLevel22.php"
+    
+        data = {
+            "levelID": str(ID),
+            "secret": "Wmfd2893gb7",
+            "gameVersion": "21",
+            "binaryVersion": "35",
+            "gdw": "0"
+        }
+        
+        headers = {
+            "User-Agent": "Geometry Dash/2.2",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "*/*"
+        }
+
+        proxies = {
+            "http": "http://85.143.254.38:1080",
+        }
+        
+        response = requests.get(url, data=data, headers=headers)
+        
+        if response.status_code != 200:
+            print(f"[LOG] HTTPError: {response.status_code} - {response.reason}")
+            return
+        
+        return response.text
+
 class logic:
     """
     PRE-ALPHA (NOT IN WORKING STATE)
@@ -719,7 +781,7 @@ class logic:
         self.onStart()
         print("[LOG] Logic loop running. (logic)")
         while True:
-            spinnythingy = "/-\|"[(self.ctx.frame//70)%4]
+            spinnythingy = "/-\\|"[(self.ctx.frame//70)%4]
             print(f"[LOG] LOGIC! Frame {self.ctx.frame} {spinnythingy}")
             self.onUpdate()
             self.loop(self.ctx)
@@ -1174,7 +1236,7 @@ def decode_level_string(data: str, region: int=None, asObject: bool=None) -> lis
                         fadeIn=fadeIn,
                         groups=groups,
                         lockPlayerX=lockPlayerX,
-                other=other, GJVAL_REGION=math.floor(c/16)))
+                other=other, GJVAL_REGION=c<<4))
     c += 1
     
     return level_objects
@@ -1266,7 +1328,7 @@ def GJgetLevelDataF():
         LocalLevels.append(GeometryDashLevel(title, author, desc, base64.urlsafe_b64encode(gz.compress(data.encode('utf-8'))).decode('utf-8'), revision=revision))
         GJLocalLevelTitleS.append(title)
         GJLocalLevelTitleLWS.append(title.lower())
-GJgetLevelDataF()
+# GJgetLevelDataF()
 
 def main():
     print("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-")
