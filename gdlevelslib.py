@@ -1328,7 +1328,7 @@ def GJgetLevelDataF():
         LocalLevels.append(GeometryDashLevel(title, author, desc, base64.urlsafe_b64encode(gz.compress(data.encode('utf-8'))).decode('utf-8'), revision=revision))
         GJLocalLevelTitleS.append(title)
         GJLocalLevelTitleLWS.append(title.lower())
-# GJgetLevelDataF()
+GJgetLevelDataF()
 
 def main():
     print("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-")
