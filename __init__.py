@@ -6,7 +6,7 @@
 # [i] so please don't edit it.
 #
 # ===========-----------------------------
-import sys
+import sys, gdlevelslib
 from pathlib import Path
 __name__ = "GDLevelsLib"
 __version__ = "1.0.0b"
